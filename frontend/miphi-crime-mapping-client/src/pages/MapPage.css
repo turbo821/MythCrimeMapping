@@ -1,0 +1,63 @@
+.map-page-for-app-container {
+  height: 100vh;
+}
+
+.map-page {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+.panel-toggle {
+  position: fixed;
+  top: 55%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 120px;
+  background-color: #34495e;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  writing-mode: vertical-rl;
+  text-align: center;
+  border: 1px solid #1abc9c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 20;
+  transition: transform 0.3s ease;
+}
+
+.panel-toggle.left {
+  left: 0;
+  border-radius: 0 5px 5px 0;
+}
+
+.panel-toggle.right {
+  right: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+.notification {
+  position: fixed;
+  top: 2%;
+  right: 10%;
+  background-color: #1abc9c;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-size: 16px;
+  font-weight: bold;
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease;
+  animation: fade-in-out 3s forwards;
+}
+
+@keyframes fade-in-out {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}

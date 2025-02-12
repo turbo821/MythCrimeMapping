@@ -1,0 +1,185 @@
+.stats-modal {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #34495e;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 800px;
+  min-height: 600px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.stats-title {
+  margin-top: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.stats-filter {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.stats-filter h4 {
+  margin-bottom: 10px;
+}
+
+.stats-checkbox-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stats-checkbox-item {
+  margin: 0;
+}
+
+.stats-content {
+  margin: 20px 0;
+}
+
+.stats-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stats-chart {
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.bar-div {
+  height: 500px;
+}
+
+.stats-chart::-webkit-scrollbar {
+  width: 1px;
+}
+
+.stats-chart::-webkit-scrollbar-track {
+  background: none;
+}
+
+.stats-chart::-webkit-scrollbar-thumb {
+  background-color: #1abc9c;
+  border-radius: 5px;
+}
+
+.stats-chart::-webkit-scrollbar-thumb:hover {
+  background-color: #16a085;
+}
+
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.stats-list li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.stats-color-indicator {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.stats-close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.stats-filters {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.stats-filters .dropdown-toggle {
+  width: 300px;
+}
+
+.stats-reset-button {
+  background-color: #2c3e50;
+  border: 1px solid #e74c3c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.stats-reset-button:hover {
+  background-color: #c0392b;
+}
+
+.stats-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.stats-navigation button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #2c3e50;
+  border: 1px solid #1abc9c;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.stats-navigation button.active {
+  background-color: #16a085;
+}
+
+.stats-navigation button:hover {
+  background-color: #16a085;
+}
+
+.sort-button {
+  background-color: #2c3e50;
+  color: white;
+  border: 1px solid #0ab35e;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.sort-button:hover {
+  background-color: #16a085;
+}
+
+.bar-div {
+  width: 100%;
+}

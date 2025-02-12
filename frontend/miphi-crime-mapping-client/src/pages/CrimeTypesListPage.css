@@ -1,0 +1,204 @@
+.crime-types-list-page {
+    padding: 20px;
+  }
+  
+.crime-types-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.crime-types-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+}
+
+.crime-count {
+    color: #6c757d;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.add-type-color {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.add-type-color {
+   display: flex;
+   align-items: end;
+  }
+ 
+.add-type-color > label {
+    margin-right: 10px;
+}
+ 
+.add-type-color .form-control{
+    width: 50px;
+    height: 30px;
+    padding: 0;
+}
+
+.crime-types-content .button-group {
+    margin: auto;
+    width: 80%;
+    display: flex;
+    gap: 30px;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+  
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.pagination .page-item {
+    margin: 0 0.2rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    color: white;
+}
+
+.pagination .page-item .page-link {
+    color: white;
+    background-color: #2c3e50;
+    border: 1px solid #2c3e50;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #555;
+    border-color: #555;
+    color: #bbb;
+}
+
+.crime-types-content .filter-section {
+    display: flex;
+  }
+
+.crime-types-content .search-container {
+    display: flex;
+    align-items: center;
+    width: 85%;
+    margin: 0 auto;
+    background-color: #2c3e50;
+    border: 1px solid #1abc9c;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.crime-types-content .filter-input {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: transparent;
+    color: white;
+}
+
+.crime-types-content .filter-input:focus {
+    border-color: #1abc9c;
+    background-color: #1abc9c;
+    color: #2c3e50;
+}
+
+.crime-types-content .filter-input::placeholder {
+    color: #bdc3c7;
+    font-style: italic;
+    font-size: 15px;
+}
+
+.crime-types-content .search-button {
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.crime-types-content .search-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(1) saturate(0) invert(1);
+}
+
+.crime-types-content .refresh-button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    background-color: #2c3e50;
+    border: 1px solid #1abc9c;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 15%;
+  }
+  
+  .crime-types-content .refresh-button:hover {
+    background-color: #16a085;
+}
+  
+.crime-types-content .refresh-button:active {
+    background-color: #138d75;
+}
+
+.crime-types-content .add-block {
+    margin: 10px;
+}
+
+.crime-types-content .add-button {
+    padding: 10px 15px;
+    background-color: #2c3e50;
+    border: 1px solid #1abc9c;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+  
+.crime-types-content .add-button:hover {
+    background-color: #16a085;
+}
+  
+.crime-types-content .add-button:active {
+    background-color: #138d75;
+}
+
+.crime-types-content .add-button:focus {
+    outline: none;
+}
+
