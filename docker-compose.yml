@@ -31,7 +31,7 @@ services:
   client:
     image: ${DOCKER_REGISTRY-}client
     build:
-      context: ./frontend/miphi-crime-mapping-client
+      context: ./frontend/myth-crime-mapping-client
       dockerfile: Dockerfile
     container_name: crime_map_client
     depends_on:

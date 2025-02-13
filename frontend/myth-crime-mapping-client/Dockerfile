@@ -5,7 +5,7 @@ RUN npm install
 COPY . .
 
 ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=/miphiapi
+ENV REACT_APP_API_URL=/mythapi
 
 RUN npm run build
 
