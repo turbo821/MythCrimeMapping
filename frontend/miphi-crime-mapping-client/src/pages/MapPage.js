@@ -55,7 +55,7 @@ const MapPage = () => {
       const response = await api.get("/api/crime-types/titles");
       return response.data;
     } catch (error) {
-      console.error("Ошибка при загрузке типов преступлений:", error);
+      console.error("Error loading crime types:", error);
     }
   };
 
@@ -65,7 +65,7 @@ const MapPage = () => {
       const response = await api.get("api/wanted-persons/basic");
       return response.data;
     } catch (error) {
-      console.error("Ошибка при загрузке преступников:", error);
+      console.error("Error loading wanted person:", error);
     }
   };
   
@@ -114,7 +114,7 @@ const MapPage = () => {
       
       return loadedPoints;
     } catch (error) {
-      console.error("Ошибка при загрузке меток преступлений:", error);
+      console.error("Error loading crime marks:", error);
     }
   };
 
@@ -218,7 +218,7 @@ const MapPage = () => {
 
     setEditPoint(getPoint);
   } catch(error) {
-    console.error("Ошибка при загрузке метки преступления:", error);
+    console.error("Error loading crime mark:", error);
   }
   };
 
@@ -246,7 +246,7 @@ const MapPage = () => {
       setIsModalOpen(false);
       showNotification("Метка успешно сохранена!");
     } catch(error) {
-      console.error("Ошибка при сохранении метки:", error);
+      console.error("Error saving crime mark:", error);
     } 
   };
 
@@ -274,7 +274,7 @@ const MapPage = () => {
       setEditPoint(null);
       showNotification("Изменения метки сохранены!");
     } catch (error) {
-      console.error("Ошибка при обновлении метки:", error.response);
+      console.error("Error updating crime mark:", error.response);
     }
   };
 
@@ -287,7 +287,7 @@ const MapPage = () => {
       setEditPoint(null);
       showNotification("Метка успешно удалена!");
     } catch (error) {
-      console.error("Ошибка при удалении метки:", error.response);
+      console.error("Error deleting crime mark:", error.response);
     }
   };
 
@@ -312,7 +312,7 @@ const MapPage = () => {
       const data = response.data;
       return data;
     } catch (error) {
-      console.error("Ошибка при запросе адреса:", error);
+      console.error("Error requesting address:", error);
     }
   };
 

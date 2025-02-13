@@ -87,7 +87,7 @@ const WantedPersonsPage = () => {
       setTotalItems(totalItems);
 
     } catch(error) {
-      console.error("Ошибка при загрузке информации об преступниках:", error.response);
+      console.error("Error loading wanted person information:", error.response);
     }
   };
 
@@ -208,7 +208,7 @@ const WantedPersonsPage = () => {
       };
 
     } catch(error) {
-      console.error("Ошибка при добавлении преступника:", error.response);
+      console.error("Error adding wanted person:", error.response);
     }
   };
 
@@ -264,7 +264,7 @@ const WantedPersonsPage = () => {
       };
 
     } catch(error) {
-      console.error("Ошибка при редактировании преступника:", error.response);
+      console.error("Error editing wanted person:", error.response);
     }
   };
 
@@ -294,7 +294,7 @@ const WantedPersonsPage = () => {
     try {
       await api.delete(`/api/wanted-persons/${id}`);
     } catch(error) {
-      console.error("Ошибка при удалении преступления:", error.response);
+      console.error("Error deleting wanted person:", error.response);
     }
   }
 

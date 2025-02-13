@@ -71,7 +71,6 @@ const CrimeTypesListPage = () => {
 
   const fetchGetAllCrimeTypes = async (page = 1, pageSize = PAGE_SIZE) => {
     try {
-      console.log(page);
       const searchQuery = search;
       const response = await api.get(`/api/crime-types?page=${page}&pageSize=${pageSize}&searchQuery=${searchQuery}`);
       const { items, totalItems, totalPages } = response.data;
@@ -90,7 +89,7 @@ const CrimeTypesListPage = () => {
       setTotalItems(totalItems);
 
     } catch(error) {
-      console.error("Ошибка при загрузке типов преступлений:", error);
+      console.error("Error loading crime types:", error);
     }
   };
 
@@ -201,7 +200,7 @@ const CrimeTypesListPage = () => {
       };
 
     } catch(error) {
-      console.error("Ошибка при запросе на добавление типа преступления:", error);
+      console.error("Error while requesting to add crime type:", error);
     }
   };
 
@@ -243,7 +242,7 @@ const CrimeTypesListPage = () => {
 
       return { ...crimeType, count: isEditingType.count };
     } catch(error) {
-      console.error("Ошибка при редактировании типа преступления:", error);
+      console.error("Error editing crime type:", error);
     }
   };
 
@@ -272,7 +271,7 @@ const CrimeTypesListPage = () => {
     try {
       await api.delete(`/api/crime-types/${id}`);
     } catch(error) {
-      console.error("Ошибка при удалении типа преступления:", error);
+      console.error("Error deleting crime type:", error);
     }
   }
 
