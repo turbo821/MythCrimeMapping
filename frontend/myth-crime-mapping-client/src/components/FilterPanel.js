@@ -128,7 +128,7 @@ const FilterPanel = ({
               className="dropdown-toggle"
               onClick={() => setIsDropdownOpenTypes((prev) => !prev)}
             >
-              Выберите типы преступлений
+              Выберите виды преступлений
             </button>
             {isDropdownOpenTypes && (
               <ul className="dropdown-list">

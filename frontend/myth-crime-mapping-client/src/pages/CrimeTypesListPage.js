@@ -339,7 +339,7 @@ const CrimeTypesListPage = () => {
     const newErrors = {};
 
     if (!formData.title) {
-      newErrors.title = "Название типа преступления обязательно.";
+      newErrors.title = "Название вида преступления обязательно.";
     }
     if (!formData.color) {
       newErrors.color = "Цвет обязателен.";
@@ -352,7 +352,7 @@ const CrimeTypesListPage = () => {
   return (
     <div className="crime-types-list-page">
       <header className="crime-types-header">
-        <h2>Информация о типах преступлений</h2>
+        <h2>Информация о видах преступлений</h2>
       </header>
       <div className="crime-types-content">
       <div className="filter-section">
@@ -380,7 +380,7 @@ const CrimeTypesListPage = () => {
 
         <div className="add-block">
           <button className="add-button" onClick={handleOpenModal}>
-            Добавить тип преступления
+            Добавить вид преступления
           </button>
         </div>
 
@@ -438,7 +438,7 @@ const CrimeTypesListPage = () => {
           <Accordion.Item eventKey="999">
           <Accordion.Header>
           <div className="d-flex justify-content-between w-100">
-                <span>Типы преступлений не определены.</span>
+                <span>Виды преступлений не определены.</span>
               </div>
           </Accordion.Header>
         </Accordion.Item>
@@ -480,8 +480,8 @@ const CrimeTypesListPage = () => {
         <Modal.Header closeButton>
           <Modal.Title>
             {isEditingType 
-            ? `Изменение типа "${isEditingType.title}"` 
-            : "Добавление нового типа"}
+            ? `Изменение для "${isEditingType.title}"` 
+            : "Добавление вида преступления"}
           </Modal.Title>
         </Modal.Header>
           <Modal.Body>
@@ -538,7 +538,7 @@ const CrimeTypesListPage = () => {
           <Modal.Title>Подтвердите удаление</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Вы уверены, что хотите удалить тип преступления <strong>{confirmDeleteType?.title}</strong>?
+          Вы уверены, что хотите удалить вид преступления <strong>{confirmDeleteType?.title}</strong>?
         </Modal.Body>
         <Modal.Footer>
           <button className="reset-button" onClick={confirmDeleteClick}>

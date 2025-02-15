@@ -230,7 +230,7 @@ const Statistic = ({ onClose, statsData = [], crimeTypes = [], wantedPersons = [
           className={viewMode === "crimeTypes" ? "active" : ""}
           onClick={() => setViewMode("crimeTypes")}
         >
-          По типам преступлений
+          По видам преступлений
         </button>
         <button
           className={viewMode === "criminals" ? "active" : ""}
@@ -248,7 +248,7 @@ const Statistic = ({ onClose, statsData = [], crimeTypes = [], wantedPersons = [
               className="dropdown-toggle"
               onClick={() => setIsDropdownOpen((prev) => !prev)}
             >
-            Выберите типы преступлений
+            Выберите виды преступлений
             </button>
             {isDropdownOpen && (
               <ul className="dropdown-list">

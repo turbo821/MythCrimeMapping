@@ -79,7 +79,7 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
     const newErrors = {};
 
     if (!formData.crimeTypeId) {
-      newErrors.crimeTypeId = "Тип преступления обязателен.";
+      newErrors.crimeTypeId = "Вид преступления обязателен.";
     }
     if (!formData.location) {
       newErrors.location = "Место совершения преступления обязательно.";
@@ -117,13 +117,13 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
         <Modal.Body>
           <Form>
             <Form.Group className="mb-1">
-              <Form.Label>Тип преступления</Form.Label>
+              <Form.Label>Вид преступления</Form.Label>
               <Form.Select
                 value={formData.crimeTypeId}
                 onChange={(e) => handleInputChange("crimeTypeId", e.target.value)}
                 isInvalid={!!errors.crimeTypeId}
               >
-                <option value="">Выберите тип преступления</option>
+                <option value="">Выберите вид преступления</option>
                 {crimeTypes.map((type) => (
                   <option key={type.id} value={type.id}>
                     {type.title}

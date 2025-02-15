@@ -9,7 +9,7 @@ const Header = () => {
         <div className="nav-links">
           <p className="header-title">MephiCrimeMap</p>
           <Link to="/" className="header-link">Карта</Link>
-          <Link to="/crime-types" className="header-link">Типы преступлений</Link>
+          <Link to="/crime-types" className="header-link">Виды преступлений</Link>
           <Link to="/wanted-persons" className="header-link">Преступники</Link>
           <Link to="/about" className="header-link">О приложении</Link>
         </div>
