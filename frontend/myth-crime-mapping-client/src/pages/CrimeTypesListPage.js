@@ -4,7 +4,7 @@ import "./CrimeTypesListPage.css";
 import { Form, Accordion, Modal, Pagination } from "react-bootstrap";
 import api from "../api";
 import { baseURL } from "../api";
-import capitalizeFirstLetter from "../services/capitalizeFirstLetter";
+import { capitalizeFirstLetter } from "../services/textFunctions";
 
 function getRandomColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;

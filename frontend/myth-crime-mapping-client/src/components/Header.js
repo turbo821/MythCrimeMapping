@@ -7,7 +7,7 @@ const Header = () => {
     <header className="header">
       <nav className="header-nav">
         <div className="nav-links">
-          <p className="header-title">MephiCrimeMap</p>
+          <p className="header-title">MythCrimeMap</p>
           <Link to="/" className="header-link">Карта</Link>
           <Link to="/crime-types" className="header-link">Виды преступлений</Link>
           <Link to="/wanted-persons" className="header-link">Преступники</Link>
@@ -15,7 +15,7 @@ const Header = () => {
         </div>
         <div className="auth-links">
           <Link to="/login" className="header-link">Вход</Link>
-          <Link to="/register" className="header-link">Регистрация</Link>
+          <Link to="/signup" className="header-link">Регистрация</Link>
         </div>
       </nav>
     </header>

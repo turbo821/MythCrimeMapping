@@ -4,7 +4,7 @@ import "./WantedPersonsPage.css";
 import { Form, Accordion, Pagination } from "react-bootstrap";
 import api from "../api";
 import { baseURL } from "../api";
-import capitalizeFirstLetter from "../services/capitalizeFirstLetter";
+import { capitalizeFirstLetter } from "../services/textFunctions";
 import { Modal } from "react-bootstrap";
 
 const resetFormData = () => {

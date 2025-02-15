@@ -5,6 +5,8 @@ import MapPage from "./pages/MapPage";
 import WantedPersonsPage from "./pages/WantedPersonsPage";
 import CrimeTypesListPage from "./pages/CrimeTypesListPage";
 import AboutPage from "./pages/AboutPage";
+import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
 import "./App.css";
 
 const App = () => {
@@ -15,6 +17,8 @@ const App = () => {
           <Route path="/crime-types" element={<Layout><CrimeTypesListPage /></Layout>} />
           <Route path="/wanted-persons" element={<Layout><WantedPersonsPage /></Layout>} />
           <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+          <Route path="/login" element={<Layout><SignInPage /></Layout>} />
+          <Route path="/signup" element={<Layout><SignUpPage /></Layout>} />  
         </Routes>
     </Router>
   );

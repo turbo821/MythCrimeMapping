@@ -5,4 +5,9 @@ const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
   }
 
-export default capitalizeFirstLetter;
+function isValidEmail(email) {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+}
+
+export { capitalizeFirstLetter, isValidEmail };

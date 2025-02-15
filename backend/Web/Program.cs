@@ -26,6 +26,11 @@ using Application.Filters.CrimeFilters;
 using Application.Filters.WantedPersonFilters;
 using Application.Filters.CrimeTypeFilters;
 using Web.Hubs;
+using Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? builder.Configuration.GetConnectionString("DefaultConnection")!;
@@ -89,6 +94,27 @@ builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimesByMultiplePersonsF
 
 builder.Services.AddScoped<ISearchFilter<WantedPerson>, WantedPersonsSearchFilter>();
 builder.Services.AddScoped<ISearchFilter<CrimeType>, CrimeTypesSearchFilter>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
 var app = builder.Build();
 
