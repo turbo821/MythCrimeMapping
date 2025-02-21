@@ -7,6 +7,8 @@ using Application.UseCases.DeleteCrime;
 using Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 using Web.Hubs;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -60,8 +62,15 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddCrimeMark([FromBody] CreateCrimeRequest request)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -73,8 +82,15 @@ namespace Web.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<IActionResult> UpdateCrimeMark([FromBody] UpdateCrimeRequest request)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -88,8 +104,15 @@ namespace Web.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> RemoveCrimeMark(Guid id) 
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             var response = await _deleteCrime.Handle(id);
             if(!response)
                 return NotFound();

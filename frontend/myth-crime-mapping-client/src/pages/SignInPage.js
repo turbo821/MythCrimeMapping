@@ -3,12 +3,15 @@ import { Form, Button } from "react-bootstrap";
 import { Eye, EyeOff } from "lucide-react";
 import "./SignPage.css";
 import { isValidEmail } from "../services/textFunctions";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordEyes, setShowPasswordEyes] = useState(true);
+  const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -24,19 +27,19 @@ const SignInPage = () => {
     }
 
     try {
-      // TODO
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const user = {
+        email: formData.email,
+        password: formData.password
+      };
 
-      if (!response.ok) {
-        throw new Error("Неверный email или пароль");
-      }
+      const response = await api.post("/api/auth/login", user);
+
+      localStorage.setItem("token", response.data.token);
+
+      navigate("/");
 
     } catch (err) {
-      console.log(err);
+      setErrors({ general: "Неверный логин или пароль!" });
     }
   };
 
@@ -77,7 +80,7 @@ const SignInPage = () => {
             <Form.Label>Электронная почта</Form.Label>
             <Form.Control 
               className="control-input" 
-              type="text"
+              type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               isInvalid={!!errors.email}
@@ -98,6 +101,7 @@ const SignInPage = () => {
               isInvalid={!!errors.password}
               />
               {errors.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
+              {errors.general && <Form.Text className="text-danger">{errors.general}</Form.Text>}
             {showPasswordEyes && (showPassword ? (
               <EyeOff className="eye-icon" onClick={() => setShowPassword(false)} />
             ) : (

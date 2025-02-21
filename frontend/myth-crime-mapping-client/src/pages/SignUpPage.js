@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import "./SignPage.css";
 import { isValidEmail } from "../services/textFunctions";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const SignUpPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPasswordEyes, setShowPasswordEyes] = useState(true);
   const [showConfirmPasswordEyes, setShowConfirmPasswordEyes] = useState(true);
+  const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -47,11 +49,12 @@ const SignUpPage = () => {
 
       const response = await api.post("/api/auth/signup", user);
 
-      console.log(response.data);
-      
+      localStorage.setItem("token", response.data.token);
+
+      navigate("/");
 
     } catch (err) {
-      console.log(err);
+      setErrors({ email: "Аккаунт с таким email уже существует!" });
     }
   };
 
@@ -161,7 +164,7 @@ const SignUpPage = () => {
             <Form.Label>Электронная почта</Form.Label>
             <Form.Control 
               className="control-input" 
-              type="text"
+              type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               isInvalid={!!errors.email}

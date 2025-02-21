@@ -5,6 +5,7 @@ import FilterPanel from "../components/FilterPanel";
 import MarkerPanel from "../components/MarkerPanel";
 import AddPointModal from "../components/AddPointModal";
 import EditPointModal from "../components/EditPointModal";
+import ViewPointModal from "../components/ViewPointModal";
 import Statistic from "../components/Statistic";
 import "./MapPage.css";
 import api from "../api";
@@ -19,6 +20,7 @@ const MapPage = () => {
   const [wantedPersons, setWantedPersons] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [errorNotification, setErrorNotification] = useState(null);
   const [editPoint, setEditPoint] = useState(null);
   const [selectedPoint, setSelectedPoint] = useState(null);
 
@@ -32,6 +34,7 @@ const MapPage = () => {
   const [radiusInMeters, setRadiusInMeters] = useState(500);
 
   const [isStatsVisible, setIsStatsVisible] = useState(false);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +61,6 @@ const MapPage = () => {
       console.error("Error loading crime types:", error);
     }
   };
-
   
   const fetchGetAllWantedPersons = async () => {
     try {
@@ -202,8 +204,11 @@ const MapPage = () => {
   const fetchGetPoint = async (point) => {
     try {
     const response = await api.get(`/api/crime-marks/${point.id}`);
+    const crimeType = crimeTypes.find((type) => type.id === response.data.crimeTypeId);
+
     const getPoint = {
       id: response.data.id,
+      title: crimeType.title,
       crimeTypeId: response.data.crimeTypeId,
       wantedPersonId: response.data.wantedPersonId,
       wantedPersonName: response.data.wantedPersonName,
@@ -224,7 +229,11 @@ const MapPage = () => {
 
   const fetchAddPoint = async (point) => {
     try {
-      const response = await api.post("/api/crime-marks", point);
+      const response = await api.post("/api/crime-marks", point, 
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
 
       const crimeType = crimeTypes.find((type) => type.id === point.crimeTypeId);
@@ -252,10 +261,14 @@ const MapPage = () => {
 
   const fetchUpdatePoint = async (point) => {
     try {
-      const response = await api.patch(`/api/crime-marks`, point);
+      const response = await api.patch(`/api/crime-marks`, point,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
+
       const crimeType = crimeTypes.find((type) => type.id === point.crimeTypeId);
-      
       const updatePoint = {
         id: response.data.id,
         title: crimeType.title,
@@ -280,7 +293,11 @@ const MapPage = () => {
 
   const fetchDeletePoint = async (point) => {
     try {
-      await api.delete(`/api/crime-marks/${point.id}`);
+      await api.delete(`/api/crime-marks/${point.id}`, 
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
 
       setPoints((prev) => prev.filter((p) => p.id !== point.id));
       if(connection?.state === "Connected") await connection.invoke("DeletingCrime", point.id);
@@ -369,6 +386,11 @@ const MapPage = () => {
     setTimeout(() => setNotification(null), 3000);
   };
   
+  const showErrorNotification = (message) => {
+    setErrorNotification(message);
+    setTimeout(() => setErrorNotification(null), 3000);
+  };
+
   const handleMarkerSelect = (point) => {
     setSelectedPoint(point);
   } 
@@ -447,7 +469,7 @@ const MapPage = () => {
         <MapComponent 
         points={points}
         crimeTypes={crimeTypes}
-        onAddPoint={handleAddPoint}
+        onAddPoint={token ? handleAddPoint : () => showErrorNotification("Войдите чтобы добавить метку!")}
         onGetPoint={fetchGetPoint}
         selectedPoint={selectedPoint}
         isSettingSearchCenter={isSettingSearchCenter}
@@ -477,8 +499,9 @@ const MapPage = () => {
           wantedPersons={wantedPersons}
           currentPoint={currentPoint}
         />
-        {editPoint && (
-        <EditPointModal
+        {editPoint && (token
+        ? (
+          <EditPointModal
           point={editPoint}
           crimeTypes={crimeTypes}
           wantedPersons={wantedPersons}
@@ -486,9 +509,17 @@ const MapPage = () => {
           onDelete={fetchDeletePoint}
           onHide={handleCancelEditPoint}
         />
+        )
+        : (
+          <ViewPointModal
+          point={editPoint}
+          onHide={handleCancelEditPoint}
+        />
+        )
         )}
         {notification && <div className="notification">{notification}</div>}
-        
+        {errorNotification && <div className="error-notification">{errorNotification}</div>}
+
         {isStatsVisible && (
         <Statistic
           onClose={handleToggleStats}

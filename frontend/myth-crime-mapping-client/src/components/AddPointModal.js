@@ -117,7 +117,7 @@ const AddPointModal = ({
   return (
     <Modal show={show} onHide={handleCancel} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Добавить метку</Modal.Title>
+        <Modal.Title>Добавление преступления</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

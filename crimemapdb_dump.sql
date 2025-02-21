@@ -5,7 +5,7 @@
 -- Dumped from database version 16.1
 -- Dumped by pg_dump version 16.1
 
--- Started on 2025-01-27 03:52:24
+-- Started on 2025-02-21 02:20:25
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -27,7 +27,7 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
 
 --
--- TOC entry 5757 (class 0 OID 0)
+-- TOC entry 5764 (class 0 OID 0)
 -- Dependencies: 2
 -- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
 --
@@ -98,6 +98,24 @@ CREATE TABLE public."Lawsuits" (
 ALTER TABLE public."Lawsuits" OWNER TO postgres;
 
 --
+-- TOC entry 226 (class 1259 OID 107937)
+-- Name: Users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Users" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Surname" text NOT NULL,
+    "Patronymic" text,
+    "Position" text NOT NULL,
+    "Email" text NOT NULL,
+    "PasswordHash" text NOT NULL
+);
+
+
+ALTER TABLE public."Users" OWNER TO postgres;
+
+--
 -- TOC entry 223 (class 1259 OID 99662)
 -- Name: WantedPersons; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -130,7 +148,7 @@ CREATE TABLE public."__EFMigrationsHistory" (
 ALTER TABLE public."__EFMigrationsHistory" OWNER TO postgres;
 
 --
--- TOC entry 5748 (class 0 OID 99655)
+-- TOC entry 5754 (class 0 OID 99655)
 -- Dependencies: 222
 -- Data for Name: CrimeTypes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -147,7 +165,7 @@ COPY public."CrimeTypes" ("Id", "Title", "Description", "Link", "Color", "Create
 
 
 --
--- TOC entry 5751 (class 0 OID 99681)
+-- TOC entry 5757 (class 0 OID 99681)
 -- Dependencies: 225
 -- Data for Name: Crimes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -168,7 +186,6 @@ COPY public."Crimes" ("Id", "Applicant", "TypeId", "WantedPersonId", "Location",
 01942eef-c2f0-7c63-a9f0-f7f059c5da18	\N	9cd0be1a-3952-40c9-a93a-bff647ec85e6	01942ecf-97ae-7fb6-ab03-81a560a7fe59	Кино	2025-01-04 04:30:52.522927+03	\N	2024-12-31 03:00:00+03	0101000020E610000054E6220991184540A1072EED4DC24740	\N
 01946b8b-a409-7d28-b2a5-7d31bd32f127	\N	01944833-52b7-7460-9adc-bfbe771c8679	12654663-c462-44cf-847e-a626d4313b1c	Волгодонск, Советская улица, 87	2025-01-15 22:58:21.193013+03	\N	2025-01-15 03:00:00+03	0101000020E610000035DF4F1B281445403826660F71C14740	\N
 01946b98-35b4-744e-9eac-1c5155ee91c2	\N	8fdfcea4-ddb1-46fd-ad0c-66be6156d550	7f4f062f-8da3-47e6-b8be-4759e48edb9b	Волгодонск, Вокзальный переулок	2025-01-15 23:12:04.888677+03	\N	2025-01-15 03:00:00+03	0101000020E610000031DF8FB3F5134540CDB982CABBC14740	\N
-01946ba3-b3c1-7abf-a501-d1973523e79d	\N	01943e21-bc4f-7616-b762-175694e57639	81e9e469-4c14-4f06-8cec-a901240c6ce3	Волгодонск, улица Ленина, 52	2025-01-15 23:24:38.053765+03	\N	2025-01-15 03:00:00+03	0101000020E610000078DDBF123D134540A669030E71C24740	\N
 01946c31-13b0-7edf-ae0d-6380a06d834d	\N	01944833-52b7-7460-9adc-bfbe771c8679	01942ecf-97ae-7fb6-ab03-81a560a7fe59	Волгодонск, улица Максима Горького	2025-01-16 01:59:03.215616+03	\N	2025-01-15 03:00:00+03	0101000020E6100000D396055757134540B78D48C49AC14740	\N
 01947614-85f9-7e23-98b3-8b36d167aa68	\N	0f5a55fd-ca82-4f00-99c5-3ef13cdd3648	0194295c-ab01-7f16-9b60-8d186431f90f	Волгодонск, улица Ленина, 122	2025-01-18 00:04:04.071264+03	\N	2025-01-17 03:00:00+03	0101000020E6100000B17336B0981545407D950ABDB5C04740	\N
 01947632-15a0-7d27-97b9-423e3e18463e	\N	0f5a55fd-ca82-4f00-99c5-3ef13cdd3648	81e9e469-4c14-4f06-8cec-a901240c6ce3	Волгодонск, улица 2-я Линия, 56	2025-01-18 00:36:26.527591+03	\N	2023-12-12 03:00:00+03	0101000020E6100000DD635191A8104540B0A2BF5709C84740	\N
@@ -184,19 +201,20 @@ COPY public."Crimes" ("Id", "Applicant", "TypeId", "WantedPersonId", "Location",
 01949f5e-b303-7bee-a911-7c8dcba73767		01949467-e367-7daa-aa18-034bb28ffda7	01948552-6486-7e89-b564-d0770903392f	Волгодонск, улица 50 лет СССР, 21	2025-01-26 00:29:31.114834+03	\N	2025-01-25 03:00:00+03	0101000020E610000005999F60D7134540A8571144CAC14740	\N
 01949f61-77a5-74e0-a3ec-9466ad5c13e4		01949467-48c0-767a-a42b-04fc1ed3fa54	\N	Волгодонск, Вокзальный переулок, 56	2025-01-26 00:32:54.675815+03	\N	2025-01-25 03:00:00+03	0101000020E610000037DF4F07001445409FE6CDBAB6C14740	
 0194958e-33cb-7287-a5bf-6e83e47c4b3e		01949467-e367-7daa-aa18-034bb28ffda7	0194852d-1a70-7e3e-8c9c-dcb2c5045295		2025-01-26 23:04:13.184862+03	\N	2025-01-23 03:00:00+03	0101000020E610000035DF4F7BE71245406C5B823D93C14740	
+01952568-bc7b-7533-8c3b-2975a0090c3f		0f5a55fd-ca82-4f00-99c5-3ef13cdd3648	\N	Волгодонск, Первомайский переулок, 75	2025-02-21 01:09:35.861861+03	\N	2025-02-20 03:00:00+03	0101000020E610000035DF4F85CE12454058047DA0FFC24740	\N
 0194a465-df88-78bc-abd5-96e9356a1908		8fdfcea4-ddb1-46fd-ad0c-66be6156d550	\N	Волгодонск, Степная улица, 31	2025-01-27 00:03:51.53645+03	\N	2025-01-26 03:00:00+03	0101000020E610000035DF4FA5091245405A26ACE7CEC14740	qq
-0194a4da-40a8-73ac-b983-0bf605355874		01949467-48c0-767a-a42b-04fc1ed3fa54	0194a4d9-9cab-715e-90c8-29e8d8dfea38	Волгодонск, Советская улица, 48	2025-01-27 02:02:34.397275+03	\N	2025-01-26 03:00:00+03	0101000020E610000036DF4F0504124540C9253B92D3C24740	\N
 0194a4da-7b44-76ec-a786-6573e41b65eb		01949467-e367-7daa-aa18-034bb28ffda7	0194a4d9-0b78-7b98-b5b4-38bdd91976f0	Волгодонск, Заречная улица, 6Б	2025-01-27 02:02:49.412038+03	\N	2025-01-26 03:00:00+03	0101000020E6100000CA502DE684174540D2F2C9A871C24740	\N
 0194a4da-ee41-746d-9612-1ecab330c63c		9cd0be1a-3952-40c9-a93a-bff647ec85e6	019485c2-4cdd-791d-8bfd-ef2a74cc8d98	Волгодонск, проспект Строителей, 2Д	2025-01-27 02:03:18.849439+03	\N	2025-01-26 03:00:00+03	0101000020E610000035DF4F4B8A184540BC47918D5FC14740	\N
 0194a4db-a448-74fe-bdb6-ed7db7446afb		0f5a55fd-ca82-4f00-99c5-3ef13cdd3648	0194a4db-a43a-761d-ae94-11238e93aa09	Волгодонск, Вербовый переулок, 4	2025-01-27 02:04:05.431959+03	\N	2025-01-26 03:00:00+03	0101000020E6100000C6E6D7194A1745405E88221C45C34740	\N
 0194a4dc-84a1-7bcf-a976-4dc4922bf75e		8fdfcea4-ddb1-46fd-ad0c-66be6156d550	0194a4dc-849b-7099-9ae5-29c329c34bdd	Волгодонск, переулок Пупкова, 12с3	2025-01-27 02:05:02.873559+03	\N	2025-01-26 03:00:00+03	0101000020E6100000C6E6D77BD8174540B718ED00FCC24740	\N
 0194a4dd-3633-735d-8904-8e2c71104e3a		9cd0be1a-3952-40c9-a93a-bff647ec85e6	0194a4dd-362e-777c-a73b-4fe28d91bec8	Волгодонск, Приморский переулок, 13	2025-01-27 02:05:48.331317+03	\N	2025-01-26 03:00:00+03	0101000020E6100000C9E6D76B9D1745407EABA77FE0C24740	\N
 0194a4dd-d3b2-70f7-857e-15f9508ed745		01943e21-bc4f-7616-b762-175694e57639	0194a4dd-d3ab-726f-bbc4-d378a46e7ed4	Волгодонск, переулок Пупкова, 5	2025-01-27 02:06:28.64782+03	\N	2025-01-13 03:00:00+03	0101000020E6100000C9E6D760991745400F3CC7BDF9C24740	\N
+01946ba3-b3c1-7abf-a501-d1973523e79d		01943e21-bc4f-7616-b762-175694e57639	81e9e469-4c14-4f06-8cec-a901240c6ce3	Волгодонск, улица Ленина, 52	2025-02-21 01:31:29.802542+03	\N	2025-01-15 03:00:00+03	0101000020E610000078DDBF123D134540A669030E71C24740	кцй
 \.
 
 
 --
--- TOC entry 5750 (class 0 OID 99669)
+-- TOC entry 5756 (class 0 OID 99669)
 -- Dependencies: 224
 -- Data for Name: Lawsuits; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -206,7 +224,19 @@ COPY public."Lawsuits" ("Id", "Number", "ReceiptDate", "PersonId", "Judge", "Dec
 
 
 --
--- TOC entry 5749 (class 0 OID 99662)
+-- TOC entry 5758 (class 0 OID 107937)
+-- Dependencies: 226
+-- Data for Name: Users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Users" ("Id", "Name", "Surname", "Patronymic", "Position", "Email", "PasswordHash") FROM stdin;
+9f12780a-1846-4c33-a25b-544ea6908496	пипи	пипи	пипи	пипи	pipi@gmail.com	AQAAAAIAAYagAAAAEMx57BfPD0SaauQ31BejwskLUmQwqdFLme7iw9Vijw1S1JQbNbW6Ndr1ffepd5Mrrg==
+60da5e0f-e0e9-4212-9f81-434cd3ae4fa4	papa	papa	papa	papa	pipi1@gmail.com	AQAAAAIAAYagAAAAEFdLdt6VTC8EBovlU8+AL9VmL0C70s1VZoa8lhtbu6JTo0HXlKaVcVgIif7+fnikjw==
+\.
+
+
+--
+-- TOC entry 5755 (class 0 OID 99662)
 -- Dependencies: 223
 -- Data for Name: WantedPersons; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -235,7 +265,7 @@ COPY public."WantedPersons" ("Id", "Name", "Surname", "Patronymic", "BirthDate",
 
 
 --
--- TOC entry 5747 (class 0 OID 99650)
+-- TOC entry 5753 (class 0 OID 99650)
 -- Dependencies: 221
 -- Data for Name: __EFMigrationsHistory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -260,11 +290,12 @@ COPY public."__EFMigrationsHistory" ("MigrationId", "ProductVersion") FROM stdin
 20250123003831_AddCreateDateCrimeTypesAndWantedPersons	9.0.1
 20250126201242_LocationIsNotNull	9.0.1
 20250126212356_CrimeTypeColorIsNotNull	9.0.1
+20250215225933_AddUsers	9.0.1
 \.
 
 
 --
--- TOC entry 5572 (class 0 OID 98892)
+-- TOC entry 5576 (class 0 OID 98892)
 -- Dependencies: 217
 -- Data for Name: spatial_ref_sys; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -274,7 +305,7 @@ COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM
 
 
 --
--- TOC entry 5584 (class 2606 OID 99661)
+-- TOC entry 5588 (class 2606 OID 99661)
 -- Name: CrimeTypes PK_CrimeTypes; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -283,7 +314,7 @@ ALTER TABLE ONLY public."CrimeTypes"
 
 
 --
--- TOC entry 5594 (class 2606 OID 99687)
+-- TOC entry 5598 (class 2606 OID 99687)
 -- Name: Crimes PK_Crimes; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -292,7 +323,7 @@ ALTER TABLE ONLY public."Crimes"
 
 
 --
--- TOC entry 5589 (class 2606 OID 99675)
+-- TOC entry 5593 (class 2606 OID 99675)
 -- Name: Lawsuits PK_Lawsuits; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -301,7 +332,16 @@ ALTER TABLE ONLY public."Lawsuits"
 
 
 --
--- TOC entry 5586 (class 2606 OID 99668)
+-- TOC entry 5600 (class 2606 OID 107943)
+-- Name: Users PK_Users; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "PK_Users" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 5590 (class 2606 OID 99668)
 -- Name: WantedPersons PK_WantedPersons; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -310,7 +350,7 @@ ALTER TABLE ONLY public."WantedPersons"
 
 
 --
--- TOC entry 5582 (class 2606 OID 99654)
+-- TOC entry 5586 (class 2606 OID 99654)
 -- Name: __EFMigrationsHistory PK___EFMigrationsHistory; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -319,7 +359,7 @@ ALTER TABLE ONLY public."__EFMigrationsHistory"
 
 
 --
--- TOC entry 5590 (class 1259 OID 99703)
+-- TOC entry 5594 (class 1259 OID 99703)
 -- Name: IX_Crimes_LawsuitId; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -327,7 +367,7 @@ CREATE INDEX "IX_Crimes_LawsuitId" ON public."Crimes" USING btree ("LawsuitId");
 
 
 --
--- TOC entry 5591 (class 1259 OID 99704)
+-- TOC entry 5595 (class 1259 OID 99704)
 -- Name: IX_Crimes_TypeId; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -335,7 +375,7 @@ CREATE INDEX "IX_Crimes_TypeId" ON public."Crimes" USING btree ("TypeId");
 
 
 --
--- TOC entry 5592 (class 1259 OID 99705)
+-- TOC entry 5596 (class 1259 OID 99705)
 -- Name: IX_Crimes_WantedPersonId; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -343,7 +383,7 @@ CREATE INDEX "IX_Crimes_WantedPersonId" ON public."Crimes" USING btree ("WantedP
 
 
 --
--- TOC entry 5587 (class 1259 OID 99706)
+-- TOC entry 5591 (class 1259 OID 99706)
 -- Name: IX_Lawsuits_PersonId; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -351,7 +391,7 @@ CREATE INDEX "IX_Lawsuits_PersonId" ON public."Lawsuits" USING btree ("PersonId"
 
 
 --
--- TOC entry 5596 (class 2606 OID 99688)
+-- TOC entry 5602 (class 2606 OID 99688)
 -- Name: Crimes FK_Crimes_CrimeTypes_TypeId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -360,7 +400,7 @@ ALTER TABLE ONLY public."Crimes"
 
 
 --
--- TOC entry 5597 (class 2606 OID 99693)
+-- TOC entry 5603 (class 2606 OID 99693)
 -- Name: Crimes FK_Crimes_Lawsuits_LawsuitId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -369,7 +409,7 @@ ALTER TABLE ONLY public."Crimes"
 
 
 --
--- TOC entry 5598 (class 2606 OID 99731)
+-- TOC entry 5604 (class 2606 OID 99731)
 -- Name: Crimes FK_Crimes_WantedPersons_WantedPersonId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -378,7 +418,7 @@ ALTER TABLE ONLY public."Crimes"
 
 
 --
--- TOC entry 5595 (class 2606 OID 99676)
+-- TOC entry 5601 (class 2606 OID 99676)
 -- Name: Lawsuits FK_Lawsuits_WantedPersons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -386,7 +426,7 @@ ALTER TABLE ONLY public."Lawsuits"
     ADD CONSTRAINT "FK_Lawsuits_WantedPersons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."WantedPersons"("Id") ON DELETE CASCADE;
 
 
--- Completed on 2025-01-27 03:52:24
+-- Completed on 2025-02-21 02:20:25
 
 --
 -- PostgreSQL database dump complete
