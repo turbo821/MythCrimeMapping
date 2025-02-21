@@ -112,7 +112,7 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
     <>
       <Modal show={onShow} onHide={onHide} size="lg">
         <Modal.Header closeButton>
-            <Modal.Title>Редактировать метку</Modal.Title>
+            <Modal.Title>Редактирование преступления</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

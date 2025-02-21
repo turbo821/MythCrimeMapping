@@ -6,6 +6,8 @@ using Application.UseCases.UpdateCrimeType;
 using Microsoft.AspNetCore.Mvc;
 using Application.UseCases.GetAllCrimeTypes;
 using Application.Pagination;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
@@ -66,8 +68,15 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddCrimeType([FromBody] CreateCrimeTypeRequest request)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -80,8 +89,15 @@ namespace Web.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<IActionResult> UpdateCrimeType([FromBody] UpdateCrimeTypeRequest request)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -95,8 +111,15 @@ namespace Web.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> RemoveCrimeType(Guid id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "You are not logged in" });
+            }
+
             var response = await _deleteCrimeType.Handle(id);
             if(!response)
                 return NotFound();

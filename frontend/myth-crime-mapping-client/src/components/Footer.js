@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <p className="footer-title">© 2025 MephiCrimeMap. Все права защищены.</p>
+        <p className="footer-title">© 2025 MythCrimeMap. Все права защищены.</p>
         <div className="footer-links">
           <Link to="/terms" className="footer-link">Пользовательское соглашение</Link>
           <Link to="/privacy" className="footer-link">Политика конфиденциальности</Link>

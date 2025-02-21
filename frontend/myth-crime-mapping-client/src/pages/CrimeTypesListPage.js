@@ -4,7 +4,7 @@ import "./CrimeTypesListPage.css";
 import { Form, Accordion, Modal, Pagination } from "react-bootstrap";
 import api from "../api";
 import { baseURL } from "../api";
-import capitalizeFirstLetter from "../services/capitalizeFirstLetter";
+import { capitalizeFirstLetter } from "../services/textFunctions";
 
 function getRandomColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
@@ -32,6 +32,7 @@ const CrimeTypesListPage = () => {
   const [totalItems, setTotalItems] = useState(1);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState({});
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchGetAllCrimeTypes(currentPage);
@@ -186,7 +187,11 @@ const CrimeTypesListPage = () => {
     try {
       crimeType.title = capitalizeFirstLetter(crimeType.title);
 
-      const response = await api.post("/api/crime-types", crimeType);
+      const response = await api.post("/api/crime-types", crimeType,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
     
       if (response.status >= 400) {
@@ -234,7 +239,11 @@ const CrimeTypesListPage = () => {
     try {
       crimeType.title = capitalizeFirstLetter(crimeType.title);
 
-      const response = await api.patch("/api/crime-types", crimeType);
+      const response = await api.patch("/api/crime-types", crimeType,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
       if (response.status >= 400) {
         return;
@@ -269,7 +278,11 @@ const CrimeTypesListPage = () => {
 
   const fetchDeleteCrimeType = async (id) => {
     try {
-      await api.delete(`/api/crime-types/${id}`);
+      await api.delete(`/api/crime-types/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
     } catch(error) {
       console.error("Error deleting crime type:", error);
     }
@@ -378,11 +391,14 @@ const CrimeTypesListPage = () => {
           </button>
         </div>
 
+        { token && (
         <div className="add-block">
           <button className="add-button" onClick={handleOpenModal}>
             Добавить вид преступления
           </button>
         </div>
+        )}
+
 
         <Accordion>
         {crimeTypes.length > 0 ? (crimeTypes.map((crimeType) => (
@@ -423,6 +439,7 @@ const CrimeTypesListPage = () => {
                   }}
                 ></span>
               </p>
+              { token && (
               <div className="button-group">
                 <button className="apply-button" onClick={() => handleEdit(crimeType)}>
                     Изменить
@@ -431,6 +448,8 @@ const CrimeTypesListPage = () => {
                     Удалить
                 </button>
               </div>
+              )}
+
           </Accordion.Body>
         </Accordion.Item>
         ))) :
@@ -476,6 +495,7 @@ const CrimeTypesListPage = () => {
         </div>
       </div>
 
+      {token && (
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -532,7 +552,9 @@ const CrimeTypesListPage = () => {
           </button>
         </Modal.Footer>
       </Modal>
-
+      )}
+      
+      {token && (
       <Modal show={showConfirm} onHide={cancelDeleteClick}>
         <Modal.Header closeButton>
           <Modal.Title>Подтвердите удаление</Modal.Title>
@@ -549,6 +571,8 @@ const CrimeTypesListPage = () => {
           </button>
         </Modal.Footer>
       </Modal>
+      )}
+
     </div>
   );
 };

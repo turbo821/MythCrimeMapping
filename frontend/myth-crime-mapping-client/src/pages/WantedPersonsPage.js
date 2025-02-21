@@ -4,7 +4,7 @@ import "./WantedPersonsPage.css";
 import { Form, Accordion, Pagination } from "react-bootstrap";
 import api from "../api";
 import { baseURL } from "../api";
-import capitalizeFirstLetter from "../services/capitalizeFirstLetter";
+import { capitalizeFirstLetter } from "../services/textFunctions";
 import { Modal } from "react-bootstrap";
 
 const resetFormData = () => {
@@ -28,6 +28,7 @@ const WantedPersonsPage = () => {
   const [totalItems, setTotalItems] = useState(1);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState({});
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchAllWantedPersons(currentPage);
@@ -189,7 +190,11 @@ const WantedPersonsPage = () => {
       wantedPerson.surname = capitalizeFirstLetter(wantedPerson.surname);
       wantedPerson.patronymic = capitalizeFirstLetter(wantedPerson.patronymic);
 
-      const response = await api.post("/api/wanted-persons", wantedPerson);
+      const response = await api.post("/api/wanted-persons", wantedPerson,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
 
       if (response.status >= 400) {
@@ -246,7 +251,11 @@ const WantedPersonsPage = () => {
       wantedPerson.surname = capitalizeFirstLetter(wantedPerson.surname);
       wantedPerson.patronymic = capitalizeFirstLetter(wantedPerson.patronymic);
 
-      const response = await api.patch("/api/wanted-persons", wantedPerson);
+      const response = await api.patch("/api/wanted-persons", wantedPerson,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       console.log(response.data.message);
       if (response.status >= 400) {
         return;
@@ -292,7 +301,11 @@ const WantedPersonsPage = () => {
 
   const fetchDeleteWantedPerson = async (id) => {
     try {
-      await api.delete(`/api/wanted-persons/${id}`);
+      await api.delete(`/api/wanted-persons/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
     } catch(error) {
       console.error("Error deleting wanted person:", error.response);
     }
@@ -405,11 +418,14 @@ const WantedPersonsPage = () => {
           </button>
         </div>
 
+        {token && (
         <div className="add-block">
           <button className="add-button" onClick={handleOpenModal}>
             Добавить преступника
           </button>
         </div>
+        )}
+
         
         <Accordion>
           {wantedPersons.length > 0 ? (wantedPersons.map((wantedPerson) => (
@@ -428,6 +444,7 @@ const WantedPersonsPage = () => {
               <p><strong>Адрес регистрации: </strong> {wantedPerson.address === null || wantedPerson.address === "" ? "-" : wantedPerson.address}</p>
               <strong>Описание:</strong> {wantedPerson.addInfo === null || wantedPerson.addInfo === "" ? "-" : <p> {wantedPerson.addInfo} </p>}
               <p><strong>Количество совершенных преступлений:</strong> {wantedPerson.count}</p>
+              {token && (
               <div className="button-group">
                 <button className="apply-button" onClick={() => handleEdit(wantedPerson)}>
                   Изменить
@@ -436,6 +453,7 @@ const WantedPersonsPage = () => {
                   Удалить
                 </button>
               </div>
+              )}
             </Accordion.Body>
           </Accordion.Item>
           )))
@@ -480,7 +498,8 @@ const WantedPersonsPage = () => {
           )}
         </div>
       </div>
-
+      
+      {token && (
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
         <Modal.Title>
@@ -555,7 +574,9 @@ const WantedPersonsPage = () => {
           </button>
         </Modal.Footer>
       </Modal>
+      )}
 
+      {token && (
       <Modal show={showConfirm} onHide={cancelDeleteClick}>
         <Modal.Header closeButton>
           <Modal.Title>Подтвердите удаление</Modal.Title>
@@ -572,6 +593,8 @@ const WantedPersonsPage = () => {
           </button>
         </Modal.Footer>
       </Modal>
+      )}
+
     </div>
   );
 };

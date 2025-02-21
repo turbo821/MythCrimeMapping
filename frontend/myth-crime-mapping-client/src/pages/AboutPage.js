@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <div className="about-page">
     <header className="about-header">
-      <h2>О приложении MephiCrimeMap</h2>
+      <h2>О приложении MythCrimeMap</h2>
     </header>
     <div className="about-content">
       <p>

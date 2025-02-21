@@ -54,6 +54,21 @@
   transition: opacity 0.5s ease-in-out, transform 0.3s ease;
   animation: fade-in-out 3s forwards;
 }
+.error-notification {
+  position: fixed;
+  top: 2%;
+  right: 10%;
+  background-color: rgb(175, 13, 13);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-size: 16px;
+  font-weight: bold;
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease;
+  animation: fade-in-out 3s forwards;
+}
 
 @keyframes fade-in-out {
   0% { opacity: 0; transform: translateY(-20px); }
