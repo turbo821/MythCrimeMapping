@@ -11,6 +11,7 @@ import "./MapPage.css";
 import api from "../api";
 import { baseURL } from "../api";
 import axios from "axios";
+import { getToken } from "../services/authFunctions";
 
 const MapPage = () => {
   const [connection, setConnection] = useState(null);
@@ -34,7 +35,7 @@ const MapPage = () => {
   const [radiusInMeters, setRadiusInMeters] = useState(500);
 
   const [isStatsVisible, setIsStatsVisible] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   useEffect(() => {
     const fetchData = async () => {

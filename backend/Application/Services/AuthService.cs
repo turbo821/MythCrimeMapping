@@ -21,7 +21,7 @@ namespace Application.Services
 
         public async Task<AuthResponseDto> RegisterAsync(SignUpUserDto dto)
         {
-            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
+            var existingUser = await _userRepository.GetUserByEmail(dto.Email);
             if (existingUser != null)
             {
                 throw new Exception("User already exists.");
@@ -39,7 +39,7 @@ namespace Application.Services
 
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
 
-            await _userRepository.AddAsync(user);
+            await _userRepository.AddUser(user);
 
             var token = _jwtProvider.GenerateToken(user);
             return new AuthResponseDto { Token = token };
@@ -47,7 +47,7 @@ namespace Application.Services
 
         public async Task<AuthResponseDto> LoginAsync(LoginUserDto dto)
         {
-            var user = await _userRepository.GetByEmailAsync(dto.Email);
+            var user = await _userRepository.GetUserByEmail(dto.Email);
             if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password) == PasswordVerificationResult.Failed)
             {
                 throw new Exception("Invalid email or password.");

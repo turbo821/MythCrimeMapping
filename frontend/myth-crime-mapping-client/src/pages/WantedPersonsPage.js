@@ -6,6 +6,7 @@ import api from "../api";
 import { baseURL } from "../api";
 import { capitalizeFirstLetter } from "../services/textFunctions";
 import { Modal } from "react-bootstrap";
+import { getToken } from "../services/authFunctions";
 
 const resetFormData = () => {
   return { name: "", surname: "", patronymic: "", birthDate: "",  address: "", addInfo: "" };
@@ -28,7 +29,7 @@ const WantedPersonsPage = () => {
   const [totalItems, setTotalItems] = useState(1);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState({});
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   useEffect(() => {
     fetchAllWantedPersons(currentPage);

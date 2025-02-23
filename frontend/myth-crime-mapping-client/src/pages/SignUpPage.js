@@ -5,6 +5,7 @@ import "./SignPage.css";
 import { isValidEmail } from "../services/textFunctions";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { setToken } from "../services/authFunctions";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,6 @@ const SignUpPage = () => {
     }
 
     try {
-      // TODO
       const user = {
         name: formData.name,
         surname: formData.surname,
@@ -48,8 +48,7 @@ const SignUpPage = () => {
       };
 
       const response = await api.post("/api/auth/signup", user);
-
-      localStorage.setItem("token", response.data.token);
+      setToken(response.data.token);
 
       navigate("/");
 

@@ -5,6 +5,7 @@ import "./SignPage.css";
 import { isValidEmail } from "../services/textFunctions";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { setToken } from "../services/authFunctions";
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -33,8 +34,7 @@ const SignInPage = () => {
       };
 
       const response = await api.post("/api/auth/login", user);
-
-      localStorage.setItem("token", response.data.token);
+      setToken(response.data.token);
 
       navigate("/");
 

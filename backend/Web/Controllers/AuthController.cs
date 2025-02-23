@@ -29,5 +29,12 @@ namespace Web.Controllers
             var response = await _authService.LoginAsync(dto);
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("/code")]
+        public async Task<IActionResult> Code(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

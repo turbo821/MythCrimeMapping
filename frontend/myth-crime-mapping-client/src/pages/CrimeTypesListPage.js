@@ -5,6 +5,7 @@ import { Form, Accordion, Modal, Pagination } from "react-bootstrap";
 import api from "../api";
 import { baseURL } from "../api";
 import { capitalizeFirstLetter } from "../services/textFunctions";
+import { getToken } from "../services/authFunctions";
 
 function getRandomColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
@@ -32,7 +33,7 @@ const CrimeTypesListPage = () => {
   const [totalItems, setTotalItems] = useState(1);
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState({});
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   useEffect(() => {
     fetchGetAllCrimeTypes(currentPage);
