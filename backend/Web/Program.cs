@@ -109,7 +109,7 @@ builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimesByMultiplePersonsF
 builder.Services.AddScoped<ISearchFilter<WantedPerson>, WantedPersonsSearchFilter>();
 builder.Services.AddScoped<ISearchFilter<CrimeType>, CrimeTypesSearchFilter>();
 
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

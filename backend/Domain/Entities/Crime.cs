@@ -13,8 +13,6 @@ namespace Domain.Entities
         public DateTime CreateAt { get; set; }
         public DateTime CrimeDate { get; set; }
         public string? Description { get; set; }
-        public Guid? LawsuitId { get; set; }
-        public Lawsuit? Lawsuit { get; set; }
         public Point Point { get; set; } = null!;
     }
 }

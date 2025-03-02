@@ -18,7 +18,7 @@ namespace Infrastructure
             string to = email;
             string from = "admin@gmail.com";
             MailMessage message = new MailMessage(from, to);
-            message.Subject = "Код восстановления почты для YuNotes";
+            message.Subject = "Код подтверждения для смены пароля MythCrimeMapping";
             string code = RandomString(10);
             message.Body = $"Код: {code}";
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);

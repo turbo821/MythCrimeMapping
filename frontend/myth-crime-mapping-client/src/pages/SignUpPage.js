@@ -54,6 +54,7 @@ const SignUpPage = () => {
 
     } catch (err) {
       setErrors({ email: "Аккаунт с таким email уже существует!" });
+      console.log(err);
     }
   };
 

@@ -1,5 +1,4 @@
 ﻿using Application.Dtos;
-using Application.Services;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +10,7 @@ namespace Web.Controllers
     {
         private readonly IAuthService _authService;
 
-        public AuthController(AuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -32,9 +31,18 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("/code")]
-        public async Task<IActionResult> Code(string email)
+        public async Task<IActionResult> Code([FromBody] string email)
         {
-            throw new NotImplementedException();
+            await _authService.GenerateResetCode(email);
+            return Ok("Code send to email");
+        }
+
+        [HttpPost]
+        [Route("/changepassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            await _authService.ChangePasswordAsync(dto);
+            return Ok("Password changed");
         }
     }
 }

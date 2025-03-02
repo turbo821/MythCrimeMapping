@@ -11,7 +11,6 @@ function getUserId() {
   if(token === null) {
     return null;
   }
-  
   const decoded = JSON.parse(atob(token.split(".")[1]));
   return decoded.nameid;
 };
