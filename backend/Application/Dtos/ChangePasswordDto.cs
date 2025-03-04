@@ -1,4 +1,4 @@
 ﻿namespace Application.Dtos
 {
-    public record ChangePasswordDto(Guid UserId, string NewPassword, string Code);
+    public record ChangePasswordDto(Guid UserId, string Password, string Code);
 }

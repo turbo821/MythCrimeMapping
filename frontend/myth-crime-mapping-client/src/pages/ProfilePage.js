@@ -5,6 +5,7 @@ import { Modal, Form } from "react-bootstrap";
 import api from "../api";
 import { getUserId, removeToken } from "../services/authFunctions";
 import "./ProfilePage.css";
+import { isValidEmail } from "../services/textFunctions";
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -27,6 +28,9 @@ const ProfilePage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPasswordEyes, setShowPasswordEyes] = useState(true);
+  const [showConfirmPasswordEyes, setShowConfirmPasswordEyes] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const token = localStorage.getItem("token");
   const currentUserId = getUserId();
@@ -45,13 +49,24 @@ const ProfilePage = () => {
     fetchUser();
   }, [id]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleSave = async () => {
+    resetErrors();
+    const valid = validateForm();
+    if (!valid) {
+      console.log("No valid");
+      return;
+    }
+
+    const payload = {
+      name: formData.name || null,
+      surname: formData.surname || null,
+      patronymic: formData.patronymic || null,
+      position: formData.position || null,
+      email: formData.email || null
+    }
+
     try {
-      await api.patch(`/api/users/${id}`, formData, {
+      await api.patch(`/api/users/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(formData);
@@ -74,11 +89,14 @@ const ProfilePage = () => {
   };
 
   const handleEding = () => {
+    resetErrors();
+    setFormData(user);
     setIsEditing(true);
   }
 
   const canselEding = () => {
     setIsEditing(false);
+    resetErrors();
   }
 
   const handleInputChange = (field, value) => {
@@ -104,17 +122,130 @@ const ProfilePage = () => {
     navigate("/login");
   };
 
-  const handleEditPassword = () => {
-    setEditPassword(true);
+  const handleEditPassword = async() => {
+    try {
+      const response = await api.post("/api/auth/code", getUserId(),
+        {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json' 
+          }
+        }
+      )
+      console.log(response.data);
+      resetErrors();
+      setPasswordForm({
+        code: "",
+        password: "",
+        confirmPassword: ""
+      });
+      setEditPassword(true);
+    }
+    catch (err) {
+      console.log("Error:: " + err);
+    }
+
   }
 
   const cancelEditPassword = () => {
     setEditPassword(false);
+    setPasswordForm({
+      code: "",
+      password: "",
+      confirmPassword: ""
+    });
+    resetErrors();
   }
 
-  const confirmEditPasswordClick = () => {
+  const confirmEditPasswordClick = async() => {
+    resetErrors();
+    const valid = validateChangePasswordForm();
+    if (!valid) {
+      console.log("No valid");
+      return;
+    }
+    
+    const data = {
+      userId: getUserId(),
+      password: passwordForm.password,
+      code: passwordForm.code
+    };
+    console.log(data);
+    try {
+      const response = await api.post("/api/auth/changepassword", data,
+        {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json' 
+          }
+        }
+      );
+      console.log(response.data);
 
+      setEditPassword(false);
+    } catch(err) {
+      console.log(err);
+      setErrors({code: "Неверный код подтверждения!"});
+    }
   }
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.surname) {
+      newErrors.surname = "Укажите вашу фамилию!";
+    }
+    if (!formData.name) {
+      newErrors.name = "Укажите ваше имя!";
+    }
+    if (!formData.position) {
+      newErrors.position = "Укажите вашу должность!";
+    }
+    if(!formData.email) {
+      newErrors.email = "Укажите вашу почту!";
+    }
+    if(formData.email && !isValidEmail(formData.email)) {
+      newErrors.email = "Неверный формат почты!";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateChangePasswordForm = () => {
+    const newErrors = {};
+    if (!passwordForm.code) {
+      newErrors.code = "Введите код подтверждения!";
+    }
+    if(!passwordForm.password) {
+      newErrors.password = "Введите пароль!";
+      setShowPasswordEyes(false);
+    }
+    if(!passwordForm.confirmPassword) {
+      newErrors.confirmPassword = "Подтвердите пароль!";
+      setShowConfirmPasswordEyes(false);
+    }
+    if(passwordForm.password && passwordForm.confirmPassword 
+      && passwordForm.password!==passwordForm.confirmPassword) {
+      newErrors.password = "Пароли не совпадают!";
+      newErrors.confirmPassword = "Пароли не совпадают!";
+      setShowPasswordEyes(false);
+      setShowConfirmPasswordEyes(false);
+    }
+    if(passwordForm.password && passwordForm.password.length < 4) {
+      newErrors.password = "Пароль слишком короткий!";
+      setShowPasswordEyes(false);
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  const resetErrors = () => {
+    setErrors({});
+    setShowPasswordEyes(true);
+    setShowConfirmPasswordEyes(true);
+  };
 
   if (!user) return <p>Загрузка...</p>;
 
@@ -127,8 +258,8 @@ const ProfilePage = () => {
         <div className="profile-info">
           <img src="/icons/profile-img.jpg" alt="profile-image"/>
           <div className="profile-text">
-            <p><strong>Фамилия:</strong> {user.name}</p>
-            <p><strong>Имя:</strong> {user.surname}</p>
+            <p><strong>Фамилия:</strong> {user.surname}</p>
+            <p><strong>Имя:</strong> {user.name}</p>
             <p><strong>Отчество:</strong> {user.patronymic}</p>
             <p><strong>Должность:</strong> {user.position}</p>
             <p><strong>Email:</strong> {user.email}</p>
@@ -137,7 +268,7 @@ const ProfilePage = () => {
 
 
         {currentUserId === id && 
-          <div class="profile-button-group">
+          <div className="profile-button-group">
             <button className="apply-button" onClick={handleEding}>Редактировать</button>
             <button className="reset-button" onClick={handleDeleteClick}>Удалить профиль</button>
             <button className="apply-button" onClick={handleEditPassword}>Изменить пароль</button>
@@ -157,7 +288,9 @@ const ProfilePage = () => {
               type="text"
               value={formData.surname}
               onChange={(e) => handleInputChange("surname", e.target.value)}
+              isInvalid={!!errors.surname}
             />
+            {errors.surname && <Form.Text className="text-danger">{errors.surname}<br/></Form.Text>}
           </Form.Group>
           <Form.Group>
             <Form.Label>Имя</Form.Label>
@@ -165,7 +298,9 @@ const ProfilePage = () => {
               type="text"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
+              isInvalid={!!errors.name}
             />
+            {errors.name && <Form.Text className="text-danger">{errors.name}<br/></Form.Text>}
           </Form.Group>
           { user.patronymic && 
           <Form.Group>
@@ -182,7 +317,9 @@ const ProfilePage = () => {
               type="text"
               value={formData.position}
               onChange={(e) => handleInputChange("position", e.target.value)}
+              isInvalid={!!errors.position}
             />
+            {errors.position && <Form.Text className="text-danger">{errors.position}<br/></Form.Text>}
           </Form.Group>
           <Form.Group>
             <Form.Label>Email</Form.Label>
@@ -190,7 +327,9 @@ const ProfilePage = () => {
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
+              isInvalid={!!errors.email}
             />
+            {errors.email && <Form.Text className="text-danger">{errors.email}<br/></Form.Text>}
           </Form.Group>  
       </Modal.Body>
       <Modal.Footer>
@@ -233,8 +372,10 @@ const ProfilePage = () => {
               className="control-input"
               type="text"
               value={passwordForm.code}
-              onChange={(e) => setPasswordForm({ ...formData, code: e.target.value })}
+              onChange={(e) => setPasswordForm({ ...passwordForm, code: e.target.value })}
+              isInvalid={!!errors.code}
             />
+            {errors.code && <Form.Text className="text-danger">{errors.code}<br/></Form.Text>}
           </Form.Group>
           <Form.Group className="password-group sign-left-group">
             <Form.Label>Новый пароль</Form.Label>
@@ -242,13 +383,16 @@ const ProfilePage = () => {
               className="control-input"
               type={showPassword ? "text" : "password"}
               value={passwordForm.password}
-              onChange={(e) => setPasswordForm({ ...formData, password: e.target.value })}
+              onChange={(e) => setPasswordForm({ ...passwordForm, password: e.target.value })}
+              isInvalid={!!errors.password}
             />
-            {showPassword ? (
+            {errors.password && <Form.Text className="text-danger">{errors.password}<br/></Form.Text>}
+
+            {showPasswordEyes && (showPassword ? (
               <EyeOff className="eye-icon" onClick={() => setShowPassword(false)} />
             ) : (
               <Eye className="eye-icon" onClick={() => setShowPassword(true)} />
-            )}
+            ))}
           </Form.Group>
           <Form.Group className="password-group sign-left-group">
             <Form.Label>Повторите пароль</Form.Label>
@@ -256,13 +400,16 @@ const ProfilePage = () => {
               className="control-input"
               type={showConfirmPassword ? "text" : "password"}
               value={passwordForm.confirmPassword}
-              onChange={(e) => setPasswordForm({ ...formData, confirmPassword: e.target.value })}
+              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+              isInvalid={!!errors.confirmPassword}
             />
-            {showConfirmPassword ? (
+            {errors.confirmPassword && <Form.Text className="text-danger">{errors.confirmPassword}<br/></Form.Text>}
+
+            {showConfirmPasswordEyes && (showConfirmPassword ? (
               <EyeOff className="eye-icon" onClick={() => setShowConfirmPassword(false)} />
             ) : (
               <Eye className="eye-icon" onClick={() => setShowConfirmPassword(true)} />
-            )}
+            ))}
           </Form.Group>
         </Form>
       </Modal.Body>

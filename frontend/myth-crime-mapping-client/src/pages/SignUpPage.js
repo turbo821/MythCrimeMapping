@@ -206,6 +206,7 @@ const SignUpPage = () => {
               isInvalid={!!errors.confirmPassword}
               />
               {errors.confirmPassword && <Form.Text className="text-danger">{errors.confirmPassword}</Form.Text>}
+              
             {showConfirmPasswordEyes && (showConfirmPassword ? (
               <EyeOff className="eye-icon" onClick={() => setShowConfirmPassword(false)} />
             ) : (

@@ -61,8 +61,8 @@ namespace Web.Controllers
             return Ok(crimeDto);
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> AddCrimeMark([FromBody] CreateCrimeRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -81,8 +81,8 @@ namespace Web.Controllers
             return CreatedAtAction(nameof(ShowCrimeMark), new { id = response.Id }, response);
         }
 
-        [HttpPatch]
         [Authorize]
+        [HttpPatch]
         public async Task<IActionResult> UpdateCrimeMark([FromBody] UpdateCrimeRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -102,9 +102,9 @@ namespace Web.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
-        [Authorize]
         public async Task<IActionResult> RemoveCrimeMark(Guid id) 
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

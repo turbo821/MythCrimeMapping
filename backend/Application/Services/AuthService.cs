@@ -63,14 +63,14 @@ namespace Application.Services
             return new AuthResponseDto { Token = token };
         }
 
-        public async Task GenerateResetCode(string email)
+        public async Task GenerateResetCode(Guid userId)
         {
-            string reserCode = await _passwordRecovery.SendCodeAsync(email);
-            var user = await _userRepository.GetUserByEmail(email);
+            var user = await _userRepository.GetUserById(userId);
             if (user == null)
             {
                 throw new Exception("User not exists.");
             }
+            string reserCode = await _passwordRecovery.SendCodeAsync(user.Email);
             user.ResetCode = reserCode;
             user.ResetCodeExpiration = DateTime.UtcNow.AddMinutes(15);
             await _userRepository.UpdateUser(user);
@@ -88,7 +88,7 @@ namespace Application.Services
                 throw new Exception("False code.");
             }
 
-            user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
 
             await _userRepository.UpdateUser(user);
         }
