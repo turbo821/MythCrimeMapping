@@ -31,10 +31,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application.UseCases.GetUser;
+using Application.UseCases.UpdateUser;
+using Application.UseCases.DeleteUser;
+using System.Net;
+
 var builder = WebApplication.CreateBuilder(args);
 
 string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? builder.Configuration.GetConnectionString("DefaultConnection")!;
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");
+string email = builder.Configuration.GetSection("Credentials:Email").Value!;
+string code = builder.Configuration.GetSection("Credentials:CodeApp").Value!;
+
 var originsArray = allowedOrigins?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? ["http://localhost:3000", "https://localhost:3000"];
 
 builder.Services.AddControllers();
@@ -58,9 +66,12 @@ builder.Services.AddDbContext<AppCrimeMapContext>(
         x => x.UseNetTopologySuite())
 );
 
+builder.Services.AddSingleton<IPasswordRecoveryService>(new BasePasswordRecoveryService(new NetworkCredential(email, code)));
+
 builder.Services.AddScoped<ICrimeMarkRepository, CrimeMarkRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 builder.Services.AddScoped<IWantedPersonRepository, WantedPersonRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IGetAllCrimesUseCase, GetAllCrimesUseCase>();
 builder.Services.AddScoped<IGetCrimeUseCase, GetCrimeUseCase>();
@@ -84,6 +95,9 @@ builder.Services.AddScoped<ICreateWantedPersonUseCase, CreateWantedPersonUseCase
 builder.Services.AddScoped<IUpdateWantedPersonUseCase, UpdateWantedPersonUseCase>();
 builder.Services.AddScoped<IDeleteWantedPersonUseCase, DeleteWantedPersonUseCase>();
 
+builder.Services.AddScoped<IGetUserUseCase, GetUserUseCase>();
+builder.Services.AddScoped<IUpdateUserUseCase, UpdateUserUseCase>();
+builder.Services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
 
 builder.Services.AddScoped<IRequestFilter<Crime>, SearchQueryFilter>();
 // builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimeByOneTypeFilter>(); // if select one type
@@ -95,8 +109,7 @@ builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimesByMultiplePersonsF
 builder.Services.AddScoped<ISearchFilter<WantedPerson>, WantedPersonsSearchFilter>();
 builder.Services.AddScoped<ISearchFilter<CrimeType>, CrimeTypesSearchFilter>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

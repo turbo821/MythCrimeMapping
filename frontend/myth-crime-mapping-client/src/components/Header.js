@@ -1,12 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Header.css";
+import { getToken, getUserId, removeToken } from "../services/authFunctions";
 
 const Header = () => {
-  const token = localStorage.getItem("token");
-
+  const token = getToken();
+  const userId = getUserId();
+  
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    removeToken();
   };
 
   return (
@@ -21,7 +23,7 @@ const Header = () => {
         </div>
         {token ? (
           <div className="auth-links">
-          <Link to="/account" className="header-link">Личный кабинет</Link>
+          <Link to={`/profile/${userId}`} className="header-link">Личный кабинет</Link>
           <Link onClick={handleLogout} to="/login" className="header-link">Выход</Link>
           </div>
         ) : (

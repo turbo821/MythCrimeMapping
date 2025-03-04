@@ -6,5 +6,7 @@ namespace Application.Services.Interfaces
     {
         Task<AuthResponseDto> RegisterAsync(SignUpUserDto dto);
         Task<AuthResponseDto> LoginAsync(LoginUserDto dto);
+        Task GenerateResetCode(Guid userId);
+        Task ChangePasswordAsync(ChangePasswordDto dto);
     }
 }

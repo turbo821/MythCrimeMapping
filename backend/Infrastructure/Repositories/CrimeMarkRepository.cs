@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Crime?> GetCrimeById(Guid id)
         {
-            Crime? crime = await _db.Crimes.Include(c => c.WantedPerson).Include(c => c.Type).Include(c => c.Lawsuit).FirstOrDefaultAsync(c => c.Id == id);
+            Crime? crime = await _db.Crimes.Include(c => c.WantedPerson).Include(c => c.Type).FirstOrDefaultAsync(c => c.Id == id);
             return crime;
         }
 

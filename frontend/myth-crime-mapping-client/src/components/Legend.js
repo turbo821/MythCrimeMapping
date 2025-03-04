@@ -1,9 +1,9 @@
 import React from "react";
 import "./Legend.css";
 
-const Legend = ({ crimeTypes = [] }) => {
+const Legend = ({ crimeTypes = [], isMarkerPanelVisible = true }) => {
   return (
-    <div className="legend-container">
+    <div className={`legend-container ${isMarkerPanelVisible ? "open" : ""}`}>
       <strong className="legend-title">Преступления:</strong>
       <ul className="legend-list">
         {crimeTypes.map((type) => (

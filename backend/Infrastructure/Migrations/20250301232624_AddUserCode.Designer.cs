@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppCrimeMapContext))]
-    partial class AppCrimeMapContextModelSnapshot : ModelSnapshot
+    [Migration("20250301232624_AddUserCode")]
+    partial class AddUserCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,6 +45,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("LawsuitId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
@@ -57,6 +63,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LawsuitId");
 
                     b.HasIndex("TypeId");
 
@@ -91,6 +99,47 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CrimeTypes");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Lawsuit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DecisionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EffectiveDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Judge")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("JudicialActs")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ReceiptDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Lawsuits");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -169,6 +218,10 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Crime", b =>
                 {
+                    b.HasOne("Domain.Entities.Lawsuit", "Lawsuit")
+                        .WithMany()
+                        .HasForeignKey("LawsuitId");
+
                     b.HasOne("Domain.Entities.CrimeType", "Type")
                         .WithMany("Crimes")
                         .HasForeignKey("TypeId")
@@ -180,9 +233,22 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("WantedPersonId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.Navigation("Lawsuit");
+
                     b.Navigation("Type");
 
                     b.Navigation("WantedPerson");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Lawsuit", b =>
+                {
+                    b.HasOne("Domain.Entities.WantedPerson", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Domain.Entities.CrimeType", b =>

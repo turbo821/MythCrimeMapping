@@ -8,7 +8,6 @@ namespace Infrastructure.Data
         public DbSet<Crime> Crimes { get; set; } = null!;
         public DbSet<CrimeType> CrimeTypes { get; set; } = null!;
         public DbSet<WantedPerson> WantedPersons { get; set; } = null!;
-        public DbSet<Lawsuit> Lawsuits { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

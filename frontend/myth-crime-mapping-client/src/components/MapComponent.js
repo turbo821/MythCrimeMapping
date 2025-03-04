@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { YMaps, Map, Placemark, Clusterer, Circle } from "@pbe/react-yandex-maps";
 import "./MapComponent.css";
-import Legend from "./Legend";
 
 const MapComponent = ({
   onAddPoint = () => {},
@@ -144,7 +143,6 @@ const MapComponent = ({
         </div>
       )}
 
-      <Legend crimeTypes={crimeTypes} />
     </div>
   );
 };

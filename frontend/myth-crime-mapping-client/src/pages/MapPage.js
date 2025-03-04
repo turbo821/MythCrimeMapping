@@ -3,6 +3,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import MapComponent from "../components/MapComponent";
 import FilterPanel from "../components/FilterPanel";
 import MarkerPanel from "../components/MarkerPanel";
+import Legend from "../components/Legend";
 import AddPointModal from "../components/AddPointModal";
 import EditPointModal from "../components/EditPointModal";
 import ViewPointModal from "../components/ViewPointModal";
@@ -11,6 +12,7 @@ import "./MapPage.css";
 import api from "../api";
 import { baseURL } from "../api";
 import axios from "axios";
+import { getToken } from "../services/authFunctions";
 
 const MapPage = () => {
   const [connection, setConnection] = useState(null);
@@ -34,7 +36,7 @@ const MapPage = () => {
   const [radiusInMeters, setRadiusInMeters] = useState(500);
 
   const [isStatsVisible, setIsStatsVisible] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -442,28 +444,29 @@ const MapPage = () => {
 
   return (
         <div className="map-page">
-        <div
-          className={`filter-panel ${isFilterPanelVisible ? "" : "collapsed"}`}
-        >
-          <FilterPanel
-          crimeTypes={crimeTypes}
-          wantedPersons={wantedPersons}
-          onApplyFilters={onApplyFilters}
-          onResetFilters={onResetFilters}
-          onToggleSearchCenter={onToggleSearchCenter}
-          isSettingSearchCenter={isSettingSearchCenter}
-          searchCenter={searchCenter}
-          radius={radiusInMeters}
-          onSetRadius={onSetRadius}
-          onShowStats={handleToggleStats}
-          />
-        </div>
-
-        <div
-          className={`panel-toggle left ${isFilterPanelVisible ? "" : "collapsed"}`}
-          onClick={toggleFilterPanel}
-        >
-          <span>Фильтры</span>
+        <div className="panel-container left">
+          <div
+            className={`filter-panel ${isFilterPanelVisible ? "" : "collapsed"}`}
+          >
+            <FilterPanel
+              crimeTypes={crimeTypes}
+              wantedPersons={wantedPersons}
+              onApplyFilters={onApplyFilters}
+              onResetFilters={onResetFilters}
+              onToggleSearchCenter={onToggleSearchCenter}
+              isSettingSearchCenter={isSettingSearchCenter}
+              searchCenter={searchCenter}
+              radius={radiusInMeters}
+              onSetRadius={onSetRadius}
+              onShowStats={handleToggleStats}
+            />
+          </div>
+          <div
+            className={`panel-toggle ${isFilterPanelVisible ? "open" : ""}`}
+            onClick={toggleFilterPanel}
+          >
+            <img src="/icons/arrow.png" alt="filters"/>
+          </div>
         </div>
         
         <MapComponent 
@@ -478,18 +481,21 @@ const MapPage = () => {
         onAddSearchCenter={onAddSearchCenter}
         />
 
-        <div
-          className={`marker-panel ${isMarkerPanelVisible ? "" : "collapsed"}`}
-        >
-          <MarkerPanel points={points} onMarkerSelect={handleMarkerSelect} />
+        <div className="panel-container right">
+          <div
+            className={`marker-panel ${isMarkerPanelVisible ? "" : "collapsed"}`}
+          >
+            <MarkerPanel points={points} onMarkerSelect={handleMarkerSelect} />
+          </div>
+          <div
+            className={`panel-toggle ${isMarkerPanelVisible ? "open" : ""}`}
+            onClick={toggleMarkerPanel}
+          >
+            <img src="/icons/arrow.png" alt="marks"/>
+          </div>
         </div>
 
-        <div
-          className={`panel-toggle right ${isMarkerPanelVisible ? "" : "collapsed"}`}
-          onClick={toggleMarkerPanel}
-        >
-          <span>Метки</span>
-        </div>
+        <Legend crimeTypes={crimeTypes} isMarkerPanelVisible={isMarkerPanelVisible} />
 
         <AddPointModal
           show={isModalOpen}

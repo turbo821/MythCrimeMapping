@@ -69,7 +69,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddCrimeType([FromBody] CreateWantedPersonRequest request)
+        public async Task<IActionResult> AddWantedPerson([FromBody] CreateWantedPersonRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -90,7 +90,7 @@ namespace Web.Controllers
 
         [HttpPatch]
         [Authorize]
-        public async Task<IActionResult> UpdateCrimeType([FromBody] UpdateWantedPersonRequest request)
+        public async Task<IActionResult> UpdateWantedPerson([FromBody] UpdateWantedPersonRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -112,7 +112,7 @@ namespace Web.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
-        public async Task<IActionResult> RemoveCrimeType(Guid id)
+        public async Task<IActionResult> RemoveWantedPerson(Guid id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)

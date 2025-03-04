@@ -119,7 +119,7 @@ namespace Web.Controllers
             {
                 return Unauthorized(new { message = "You are not logged in" });
             }
-
+            
             var response = await _deleteCrimeType.Handle(id);
             if(!response)
                 return NotFound();

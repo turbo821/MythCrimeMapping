@@ -6,9 +6,9 @@ namespace Application.UseCases.DeleteCrimeType
     {
         private ICrimeTypeRepository _repo;
 
-        public DeleteCrimeTypeUseCase(ICrimeTypeRepository crimeRepository)
+        public DeleteCrimeTypeUseCase(ICrimeTypeRepository repository)
         {
-            _repo = crimeRepository;
+            _repo = repository;
         }
         public async Task<bool> Handle(Guid id)
         {
