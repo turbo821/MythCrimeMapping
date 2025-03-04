@@ -10,6 +10,7 @@
         DateTime CrimeDate,
         string Location,
         string? Description,
+        Guid CreatorId,
         double PointLatitude,
         double PointLongitude);
 }

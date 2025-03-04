@@ -71,7 +71,7 @@ namespace Web.Controllers
                 return Unauthorized(new { message = "You are not logged in" });
             }
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || userId != request.CreatorId.ToString())
                 return BadRequest(ModelState);
 
             var response = await _createCrime.Handle(request);
@@ -91,7 +91,7 @@ namespace Web.Controllers
                 return Unauthorized(new { message = "You are not logged in" });
             }
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || userId != request.EditorId.ToString())
                 return BadRequest(ModelState);
 
             var response = await _updateCrime.Handle(request);

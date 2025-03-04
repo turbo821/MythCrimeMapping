@@ -375,12 +375,10 @@ const MapPage = () => {
   const handleCancelAddPoint = () => {
     setIsModalOpen(false);
     setCurrentPoint(null);
-    showNotification("Добавление метки отменено!");
   };
 
   const handleCancelEditPoint = () => {
     setEditPoint(null);
-    showNotification("Изменение метки отменено!");
   };
 
   const showNotification = (message) => {

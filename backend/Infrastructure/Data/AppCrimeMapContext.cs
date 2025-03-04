@@ -17,6 +17,18 @@ namespace Infrastructure.Data
                 .HasForeignKey(c => c.WantedPersonId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Crime>()
+                .HasOne(c => c.Creator)
+                .WithMany(ct => ct.CreateCrimes)
+                .HasForeignKey(c => c.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Crime>()
+                .HasOne(c => c.Editor)
+                .WithMany(ct => ct.EditCrimes)
+                .HasForeignKey(c => c.EditorId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.HasPostgresExtension("postgis");
 
             base.OnModelCreating(modelBuilder);

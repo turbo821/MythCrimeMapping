@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task UpdateCrime(Guid id, Crime data)
+        public async Task UpdateCrime(Crime data)
         {
             if (_db.Entry(data).State == EntityState.Detached)
             {

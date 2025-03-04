@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Form } from "react-bootstrap";
+import { getUserId } from "../services/authFunctions";
 
 const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, onHide }) => {
   const [formData, setFormData] = useState({
@@ -38,6 +39,7 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
 
     const payload = {
       id: formData.id,
+      editorId: getUserId(),
       crimeTypeId: formData.crimeTypeId ? formData.crimeTypeId : null,
       wantedPersonId: convertWantedPersonId || null,
       wantedPersonName: formData.wantedPersonName || null,

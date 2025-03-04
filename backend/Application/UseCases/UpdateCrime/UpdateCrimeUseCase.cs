@@ -1,4 +1,5 @@
-﻿using Application.Services.Interfaces;
+﻿using Application.Dtos;
+using Application.Services.Interfaces;
 using Application.UseCases.CreateCrime;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,22 +23,29 @@ namespace Application.UseCases.UpdateCrime
             if(!_typeRepository.ContainCrimeType(request.CrimeTypeId))
                 return null;
 
-            CreateCrimeRequest createRequest = new CreateCrimeRequest(
+            CrimeBaseInfoDto createRequest = new CrimeBaseInfoDto(
                 request.CrimeTypeId, request.WantedPersonId, 
                 request.WantedPersonName, request.WantedPersonSurname, request.WantedPersonPatronymic, request.WantedPersonBirthDate,
                 request.CrimeDate, request.Location, request.Description, request.PointLatitude, request.PointLongitude
             );
 
-            Crime? crime = await _createCrimeService.CreateCrime(createRequest); ;
+            Crime? updatedCrime = await _createCrimeService.CreateCrime(createRequest, editorId: request.EditorId);
+            Crime? crime = await _markRepository.GetCrimeById(request.Id);
 
-            if (crime is null)
+            if (updatedCrime is null || crime is null)
             {
                 return null;
             }
 
-            crime.Id = request.Id;
+            crime.TypeId = updatedCrime.TypeId;
+            crime.WantedPersonId = updatedCrime.WantedPersonId;
+            crime.Location = updatedCrime.Location;
+            crime.EditorId = updatedCrime.EditorId;
+            crime.EditAt = updatedCrime.EditAt;
+            crime.CrimeDate = updatedCrime.CrimeDate;
+            crime.Description = updatedCrime.Description;
 
-            await _markRepository.UpdateCrime(request.Id, crime);
+            await _markRepository.UpdateCrime(crime);
 
             return new CrimeReportResponse(crime.Id, "Crime report successfully edited.");
         }

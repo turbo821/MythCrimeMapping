@@ -10,5 +10,7 @@
         public string PasswordHash { get; set; } = null!;
         public string? ResetCode { get; set; }
         public DateTime? ResetCodeExpiration { get; set; }
+        public List<Crime> CreateCrimes { get; set; } = new List<Crime>();
+        public List<Crime> EditCrimes { get; set; } = new List<Crime>();
     }
 }
