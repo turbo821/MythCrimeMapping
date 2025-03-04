@@ -27,7 +27,7 @@ namespace Application.UseCases.UpdateUser
 
             await _repo.UpdateUser(user);
 
-            return new CrimeReportResponse(user.Id, "User info successfully edited.");
+            return new CrimeReportResponse(id, "User info successfully edited.");
         }
     }
 }

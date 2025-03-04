@@ -1,4 +1,5 @@
-﻿using Application.Services.Interfaces;
+﻿using Application.Dtos;
+using Application.Services.Interfaces;
 using Application.UseCases.CreateCrime;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -15,19 +16,20 @@ namespace Application.Services
             _crimeTypeRepository = crimeTypeRepository;
             _wantedPersonRepository = wantedPersonRepository;
         }
-        public async Task<Crime?> CreateCrime(CreateCrimeRequest request)
+        public async Task<Crime?> CreateCrime(CrimeBaseInfoDto request, Guid? creatorId = null, Guid? editorId = null)
         {
+            Crime crime;
             if (!_crimeTypeRepository.ContainCrimeType(request.CrimeTypeId))
             {
                 return null;
             }
             if (request.WantedPersonId is Guid id)
             {
-                return new Crime()
+                crime = new Crime()
                 {
                     TypeId = request.CrimeTypeId,
+                    CreatorId = creatorId,
                     Location = request.Location,
-                    CreateAt = DateTime.Now.ToUniversalTime(),
                     CrimeDate = DateTime.SpecifyKind(request.CrimeDate, DateTimeKind.Utc),
                     WantedPersonId = id,
                     Description = request.Description,
@@ -36,11 +38,10 @@ namespace Application.Services
             }
             else if (request.WantedPersonName is not null && request.WantedPersonSurname is not null && request.WantedPersonBirthDate is not null)
             {
-                return new Crime()
+                crime = new Crime()
                 {
                     TypeId = request.CrimeTypeId,
                     Location = request.Location,
-                    CreateAt = DateTime.Now.ToUniversalTime(),
                     CrimeDate = DateTime.SpecifyKind(request.CrimeDate, DateTimeKind.Utc),
                     WantedPersonId = await GetWantedPersonId(
                         request.WantedPersonName, request.WantedPersonSurname, request.WantedPersonPatronymic,
@@ -51,16 +52,32 @@ namespace Application.Services
             }
             else if (request.WantedPersonId is null && request.WantedPersonName is null && request.WantedPersonSurname is null)
             {
-                return new Crime()
+                crime = new Crime()
                 {
                     TypeId = request.CrimeTypeId,
                     Location = request.Location,
-                    CreateAt = DateTime.Now.ToUniversalTime(),
                     CrimeDate = DateTime.SpecifyKind(request.CrimeDate, DateTimeKind.Utc),
                     WantedPersonId = null,
                     Description = request.Description,
                     Point = new Point(request.PointLongitude, request.PointLatitude) { SRID = 4326 }
                 };
+            }
+            else
+            {
+                return null;
+            }
+
+            if (creatorId != null)
+            {
+                crime.CreatorId = creatorId;
+                crime.CreateAt = DateTime.Now.ToUniversalTime();
+                return crime;
+            }
+            else if (editorId != null)
+            {
+                crime.EditorId = editorId;
+                crime.EditAt = DateTime.Now.ToUniversalTime();
+                return crime;
             }
             else
             {

@@ -8,7 +8,7 @@ namespace Domain.Interfaces
         Task AddCrime(Crime crime);
         Task<Crime?> GetCrimeById(Guid id);
         Task<IEnumerable<Crime>> GetFilteredCrimes(CrimeFilterRequest filter);
-        Task UpdateCrime(Guid id, Crime data);
+        Task UpdateCrime(Crime data);
         Task<bool> DeleteCrime(Guid id);
     }
 }

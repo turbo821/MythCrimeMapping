@@ -14,7 +14,7 @@ services:
       - "5432:5432"
 
   api:
-    image: turbo821/myth-crime-mapping-api:02-21
+    image: turbo821/myth-crime-mapping-api:03.05
     container_name: crime_map_api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -27,7 +27,7 @@ services:
       - "8081:8081"
      
   client:
-    image: turbo821/myth-crime-mapping-client:02-21
+    image: turbo821/myth-crime-mapping-client:03.05
     container_name: crime_map_client
     depends_on:
       - api

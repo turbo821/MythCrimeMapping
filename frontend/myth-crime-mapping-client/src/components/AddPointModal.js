@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form } from "react-bootstrap";
+import { getUserId } from "../services/authFunctions";
 
 const resetFormData = () => {
   return {
@@ -57,6 +58,7 @@ const AddPointModal = ({
       : formData.wantedPersonId;
 
       const payload = {
+        creatorId: getUserId(),
         crimeTypeId: formData.crimeTypeId ? formData.crimeTypeId : null,
         wantedPersonId: convertWantedPersonId || null,
         wantedPersonName: formData.wantedPersonName || null,

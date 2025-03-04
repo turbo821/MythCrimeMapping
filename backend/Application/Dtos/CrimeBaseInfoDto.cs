@@ -1,7 +1,7 @@
-﻿namespace Application.UseCases.UpdateCrime
+﻿
+namespace Application.Dtos
 {
-    public record UpdateCrimeRequest(
-        Guid Id,
+    public record CrimeBaseInfoDto(
         Guid CrimeTypeId,
         Guid? WantedPersonId,
         string? WantedPersonName,
@@ -11,7 +11,6 @@
         DateTime CrimeDate,
         string Location,
         string? Description,
-        Guid EditorId,
         double PointLatitude,
         double PointLongitude);
 }
