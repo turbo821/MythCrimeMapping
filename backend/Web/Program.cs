@@ -99,6 +99,7 @@ builder.Services.AddScoped<IGetUserUseCase, GetUserUseCase>();
 builder.Services.AddScoped<IUpdateUserUseCase, UpdateUserUseCase>();
 builder.Services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
 
+builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimesToUserFilter>();
 builder.Services.AddScoped<IRequestFilter<Crime>, SearchQueryFilter>();
 // builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimeByOneTypeFilter>(); // if select one type
 builder.Services.AddScoped<IRequestFilter<Crime>, SelectCrimesByMultipleTypesFilter>(); // if select more types

@@ -21,6 +21,8 @@ const FilterPanel = ({
   const [isDropdownOpenPersons, setIsDropdownOpenPersons] = useState(false);
   const [selectedCrimeTypeIds, setSelectedCrimeTypeIds] = useState([]);
   const [selectedWantedPersonIds, setSelectedWantedPersoIds] = useState([]);
+  const [selectMyMarks, setSelectMyMarks] = useState(false);
+  const [selectEditMarks, setSelectEditMarks] = useState(false);
 
   const dropdownTypesRef = useRef(null);
   const dropdownPersonsRef = useRef(null);
@@ -35,7 +37,7 @@ const FilterPanel = ({
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters({ search, selectedCrimeTypeIds, selectedWantedPersonIds, searchCenter, radius, dateRange });
+    onApplyFilters(search, selectedCrimeTypeIds, selectedWantedPersonIds, searchCenter, radius, dateRange, selectMyMarks, selectEditMarks);
   };
 
   const handleResetFilters = () => {
@@ -44,6 +46,8 @@ const FilterPanel = ({
     setSelectedWantedPersoIds([]);
     setDateRange({ from: "", to: "" });
     onResetFilters();
+    setSelectEditMarks(false);
+    setSelectMyMarks(false);
   };
 
   const handleToggleStats = () => {
@@ -227,6 +231,30 @@ const FilterPanel = ({
             />
           </div>
         </div>
+
+        <div className="filter-section">
+        <label >
+          <input
+            type="checkbox"
+            checked={selectMyMarks}
+            onChange={() => setSelectMyMarks((prev) => !prev)}
+            className="out-checkbox"
+          />
+          Показать мои метки
+        </label>
+        </div>
+        <div className="filter-section">
+        <label >
+          <input
+            type="checkbox"
+            checked={selectEditMarks}
+            onChange={() => setSelectEditMarks((prev) => !prev)}
+            className="out-checkbox"
+          />
+          Показать измененные мной метки
+        </label>
+        </div>
+
         <div className="filter-actions">
           <button className="apply-button" onClick={handleApplyFilters}>
             Применить

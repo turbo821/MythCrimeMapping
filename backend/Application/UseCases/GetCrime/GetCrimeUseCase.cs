@@ -22,14 +22,16 @@ namespace Application.UseCases.GetCrime
             return new GetCrimeResponse
             (
                 crime.Id,
+                crime.CreatorId,
+                crime.EditorId,
                 crime.TypeId,
-                crime.Type.Title,
                 crime.WantedPersonId,
                 crime.WantedPerson?.Name,
                 crime.WantedPerson?.Surname,
                 crime.WantedPerson?.Patronymic,
                 crime.WantedPerson?.BirthDate,
                 crime.CreateAt,
+                crime.EditAt,
                 crime.CrimeDate,
                 crime.Location,
                 crime.Description,

@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 import { Modal, Form } from "react-bootstrap";
 import { getUserId } from "../services/authFunctions";
+import "./EditPointModal.css";
 
 const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, onHide }) => {
+  const create = point.creatorId ? {
+    creatorId: point?.creatorId,
+    createAt: point?.createAt?.split("T")[0] || ""
+  } : null;
+  const edit = point.editorId ? {
+    editorId: point?.editorId,
+    editAt: point?.editAt?.split("T")[0] || ""
+  } : null;
+
   const [formData, setFormData] = useState({
     id: point?.id || "",
     crimeTypeId: point?.crimeTypeId || "",
@@ -114,7 +124,17 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
     <>
       <Modal show={onShow} onHide={onHide} size="lg">
         <Modal.Header closeButton>
-            <Modal.Title>Редактирование преступления</Modal.Title>
+          <Modal.Title className="edit-crime-title">Редактирование преступления</Modal.Title>
+          {(create || edit ) && (
+            <div className="edit-div-col">
+              {create && (<a href={`/profile/${create.creatorId}`} className="date-link">Дата создания: {create.createAt}
+                <span className="date-link-tooltiptext">Перейти к профилю создателя</span>
+              </a>)}
+              {edit && (<a href={`/profile/${edit.editorId}`} className="date-link">Дата редактирования: {edit.editAt}
+                <span className="date-link-tooltiptext">Перейти к профилю редактировавшего</span>
+              </a>)}
+            </div>
+          )}
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -168,7 +188,7 @@ const EditPointModal = ({ point, crimeTypes, wantedPersons, onSave, onDelete, on
               </Form.Select>
               {errors.wantedPersonId && <Form.Text className="text-danger">{errors.wantedPersonId}</Form.Text>}
             </Form.Group>
-            
+
             <Form.Group className="form-control mb-1">
             <Form.Label>Фамилия</Form.Label>
               <Form.Control

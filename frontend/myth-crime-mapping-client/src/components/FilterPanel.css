@@ -297,3 +297,7 @@
 .dropdown-list::-webkit-scrollbar-thumb:hover {
   background-color: #16a085;
 }
+
+.out-checkbox {
+  margin-right: 10px;
+}

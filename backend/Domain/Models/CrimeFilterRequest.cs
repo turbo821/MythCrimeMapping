@@ -11,5 +11,7 @@
         public double? Radius { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public Guid? MyMarks { get; set; }
+        public Guid? EditMarks { get; set; }
     }
 }

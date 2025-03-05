@@ -1,0 +1,56 @@
+
+.edit-crime-title {
+  width: 60%;
+}
+
+.edit-div-col {
+  margin: auto 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 40%;
+}
+
+.date-link {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;  
+  margin: 0;
+  margin-right: 10px;
+  text-align: end;
+  text-decoration: none;
+}
+
+.date-link .date-link-tooltiptext {
+  visibility: hidden;
+  background-color: #34495e;
+  border: 1px solid #1abc9c;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 14px;
+}
+
+.date-link .date-link-tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #34495e transparent;
+}
+
+.date-link:hover .date-link-tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

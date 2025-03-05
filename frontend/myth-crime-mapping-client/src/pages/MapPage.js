@@ -12,7 +12,7 @@ import "./MapPage.css";
 import api from "../api";
 import { baseURL } from "../api";
 import axios from "axios";
-import { getToken } from "../services/authFunctions";
+import { getToken, getUserId } from "../services/authFunctions";
 
 const MapPage = () => {
   const [connection, setConnection] = useState(null);
@@ -80,7 +80,9 @@ const MapPage = () => {
     selectedWantedPersonIds = [],
     center = { latitude: null, longitude: null },
     radius = null,
-    dateRange = { from: null, to: null }
+    dateRange = { from: null, to: null },
+    myMarks = false,
+    editMarks = false,
   ) => {
     try {
       const params = new URLSearchParams();
@@ -99,7 +101,8 @@ const MapPage = () => {
       } 
       if (dateRange.from) params.append("StartDate", new Date(dateRange.from).toISOString());
       if (dateRange.to) params.append("EndDate", new Date(dateRange.to).toISOString());
-  
+      if(myMarks) params.append("MyMarks", getUserId());
+      if(editMarks) params.append("EditMarks", getUserId());
       const response = await api.get(`/api/crime-marks?${params.toString()}`);
       
       const loadedPoints = response.data.map((item) => {
@@ -208,8 +211,14 @@ const MapPage = () => {
     const response = await api.get(`/api/crime-marks/${point.id}`);
     const crimeType = crimeTypes.find((type) => type.id === response.data.crimeTypeId);
 
+    console.log(response.data);
+
     const getPoint = {
       id: response.data.id,
+      creatorId: response.data.creatorId,
+      createAt: response.data.createAt,
+      editorId: response.data.editorId,
+      editAt: response.data.editAt,
       title: crimeType.title,
       crimeTypeId: response.data.crimeTypeId,
       wantedPersonId: response.data.wantedPersonId,
@@ -395,13 +404,15 @@ const MapPage = () => {
     setSelectedPoint(point);
   } 
 
-  const onApplyFilters = async({ search, selectedCrimeTypeIds, selectedWantedPersonIds, searchCenter, radius, dateRange }) => {
+  const onApplyFilters = async(search, selectedCrimeTypeIds, selectedWantedPersonIds, searchCenter, radius, dateRange, selectMyMarks, selectEditMarks) => {
     setPoints([]);
     const loadedPoints = await fetchGetAllCrimeMarks(crimeTypes, search, 
       selectedCrimeTypeIds, selectedWantedPersonIds,
       searchCenter === null ? { latitude: null, longitude: null } 
       : { latitude: searchCenter.latitude, longitude: searchCenter.longitude },
-      radius, { from: dateRange.from, to: dateRange.to }
+      radius, { from: dateRange.from, to: dateRange.to },
+      selectMyMarks,
+      selectEditMarks
     )
     
     setPoints(loadedPoints);
