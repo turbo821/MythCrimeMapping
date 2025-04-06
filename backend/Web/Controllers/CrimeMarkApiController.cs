@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.SignalR;
 using Web.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Caching.Memory;
+using Application.Services.Interfaces;
 
 namespace Web.Controllers
 {
@@ -22,6 +24,8 @@ namespace Web.Controllers
         private readonly IUpdateCrimeUseCase _updateCrime;
         private readonly IDeleteCrimeUseCase _deleteCrime;
         private readonly IHubContext<RealHub> _hubContext;
+        private readonly IMemoryCache _cache;
+        private readonly ICacheKeyTracker _cacheKeyTracker;
 
         public CrimeMarkApiController(
             IGetAllCrimesUseCase getAllCrime, 
@@ -29,7 +33,9 @@ namespace Web.Controllers
             IGetCrimeUseCase getCrime, 
             IUpdateCrimeUseCase updateCrime,
             IDeleteCrimeUseCase deleteCrime,
-            IHubContext<RealHub> hubContext)
+            IHubContext<RealHub> hubContext,
+            IMemoryCache cache,
+            ICacheKeyTracker cacheKeyTracker)
         {
             _getAllCrimes = getAllCrime; 
             _createCrime = createCrime;
@@ -37,12 +43,21 @@ namespace Web.Controllers
             _updateCrime = updateCrime;
             _deleteCrime = deleteCrime;
             _hubContext = hubContext;
+            _cache = cache;
+            _cacheKeyTracker = cacheKeyTracker;
         }
 
         [HttpGet]
         public async Task<IActionResult> ShowAllCrimeMarks([FromQuery] CrimeFilterRequest filterRequest)
         {
-            var response = await _getAllCrimes.Handle(filterRequest);
+            var cacheKey = $"AllCrimes_{filterRequest.GetCacheKey()}";
+            if (!_cache.TryGetValue(cacheKey, out object response))
+            {
+                response = await _getAllCrimes.Handle(filterRequest);
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
+            }
 
             return Ok(response);
         }
@@ -51,11 +66,17 @@ namespace Web.Controllers
         [Route("{id}")]
         public async Task<IActionResult> ShowCrimeMark(Guid id)
         {
-            var crimeDto = await _getCrime.Handle(id);
-
-            if (crimeDto == null)
+            var cacheKey = $"Crime_{id}";
+            if (!_cache.TryGetValue(cacheKey, out var crimeDto))
             {
-                return NotFound(new { Message = $"Crime with ID {id} not found." });
+                crimeDto = await _getCrime.Handle(id);
+
+                if (crimeDto == null)
+                {
+                    return NotFound(new { Message = $"Crime with ID {id} not found." });
+                }
+
+                _cache.Set(cacheKey, crimeDto, TimeSpan.FromMinutes(10));
             }
 
             return Ok(crimeDto);
@@ -78,6 +99,8 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(response);
 
+            ClearCrimeCache(response.Id);
+
             return CreatedAtAction(nameof(ShowCrimeMark), new { id = response.Id }, response);
         }
 
@@ -95,9 +118,10 @@ namespace Web.Controllers
                 return BadRequest(ModelState);
 
             var response = await _updateCrime.Handle(request);
-
             if (response is null)
                 return BadRequest(response);
+
+            ClearCrimeCache(response.Id);
 
             return Ok(response);
         }
@@ -105,7 +129,7 @@ namespace Web.Controllers
         [Authorize]
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> RemoveCrimeMark(Guid id) 
+        public async Task<IActionResult> RemoveCrimeMark(Guid id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -114,10 +138,28 @@ namespace Web.Controllers
             }
 
             var response = await _deleteCrime.Handle(id);
-            if(!response)
+            if (!response)
                 return NotFound();
 
+            ClearCrimeCache(id);
+
             return Ok();
+        }
+
+        private void ClearCrimeCache(Guid crimeId)
+        {
+            _cache.Remove($"Crime_{crimeId}");
+
+            var keysCrimes = _cacheKeyTracker.GetKeys("AllCrimes");
+            var keysWantedPersons = _cacheKeyTracker.GetKeys("AllWantedPersons");
+
+            var keys = keysCrimes.Concat(keysWantedPersons);
+
+            foreach (var key in keys)
+            {
+                _cache.Remove(key);
+                _cacheKeyTracker.RemoveKey(key);
+            }
         }
     }
 }

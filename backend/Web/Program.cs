@@ -35,6 +35,7 @@ using Application.UseCases.GetUser;
 using Application.UseCases.UpdateUser;
 using Application.UseCases.DeleteUser;
 using System.Net;
+using Infrastructure.Cache;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,9 @@ builder.Services.AddDbContext<AppCrimeMapContext>(
     options => options.UseNpgsql(connection,
         x => x.UseNetTopologySuite())
 );
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICacheKeyTracker, InMemoryCacheKeyTracker>();
 
 builder.Services.AddSingleton<IPasswordRecoveryService>(new BasePasswordRecoveryService(new NetworkCredential(email, code)));
 

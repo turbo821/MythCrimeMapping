@@ -13,5 +13,25 @@
         public DateTime? EndDate { get; set; }
         public Guid? MyMarks { get; set; }
         public Guid? EditMarks { get; set; }
+
+        public string GetCacheKey()
+        {
+            var parts = new List<string>
+            {
+                $"search={SearchQuery}",
+                $"crimeTypeId={CrimeTypeId}",
+                $"crimeTypeIds={string.Join(",", CrimeTypeIds ?? Enumerable.Empty<Guid>())}",
+                $"wantedPersonIds={string.Join(",", WantedPersonIds ?? Enumerable.Empty<Guid>())}",
+                $"lat={Latitude}",
+                $"lon={Longitude}",
+                $"radius={Radius}",
+                $"start={StartDate?.ToString("yyyyMMddHHmmss")}",
+                $"end={EndDate?.ToString("yyyyMMddHHmmss")}",
+                $"myMarks={MyMarks}",
+                $"editMarks={EditMarks}"
+            };
+
+            return string.Join(";", parts);
+        }
     }
 }
