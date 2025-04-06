@@ -8,6 +8,8 @@ using Application.UseCases.GetAllCrimeTypes;
 using Application.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Caching.Memory;
+using Application.Services.Interfaces;
 
 namespace Web.Controllers
 {
@@ -21,13 +23,18 @@ namespace Web.Controllers
         private readonly ICreateCrimeTypeUseCase _createCrimeType;
         private readonly IUpdateCrimeTypeUseCase _updateCrimeType;
         private readonly IDeleteCrimeTypeUseCase _deleteCrimeType;
+        private readonly IMemoryCache _cache;
+        private readonly ICacheKeyTracker _cacheKeyTracker;
+
         public CrimeTypesApiController(
             ISelectAllCrimeTypesUseCase selectAllCrimeTypes,
             IGetAllCrimeTypesUseCase getAllCrimeTypes,
             IGetCrimeTypeUseCase getCrimeType,
             ICreateCrimeTypeUseCase createCrimeType,
             IUpdateCrimeTypeUseCase updateCrimeType,
-            IDeleteCrimeTypeUseCase deleteCrimeType)
+            IDeleteCrimeTypeUseCase deleteCrimeType,
+            IMemoryCache cache,
+            ICacheKeyTracker cacheKeyTracker)
         {
             _selectAllCrimeTypes = selectAllCrimeTypes;
             _getAllCrimeTypes = getAllCrimeTypes;
@@ -35,20 +42,37 @@ namespace Web.Controllers
             _createCrimeType = createCrimeType;
             _updateCrimeType = updateCrimeType;
             _deleteCrimeType = deleteCrimeType;
+            _cache = cache;
+            _cacheKeyTracker = cacheKeyTracker;
         }
 
         [HttpGet("titles")]
         public async Task<IActionResult> SelectAllCrimeTypes()
         {
-            var response = await _selectAllCrimeTypes.Handle();
+            var cacheKey = "AllCrimeTypes";
+            if (!_cache.TryGetValue(cacheKey, out var response))
+            {
+                response = await _selectAllCrimeTypes.Handle();
 
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
+            }
+                
             return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCrimeTypes([FromQuery] PaginationSearchParameters request)
         {
-            var response = await _getAllCrimeTypes.Handle(request);
+            var cacheKey = $"AllCrimeTypes_{request.GetCacheKey()}";
+            if (!_cache.TryGetValue(cacheKey, out var response))
+            {
+                response = await _getAllCrimeTypes.Handle(request);
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
+            }
 
             return Ok(response);
         }
@@ -57,11 +81,17 @@ namespace Web.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetCrimeType(Guid id)
         {
-            var response = await _getCrimeType.Handle(id);
-
-            if (response == null)
+            var cacheKey = $"CrimeType_{id}";
+            if (!_cache.TryGetValue(cacheKey, out var response))
             {
-                return NotFound(new { Message = $"Crime type with ID {id} not found." });
+                response = await _getCrimeType.Handle(id);
+
+                if (response == null)
+                {
+                    return NotFound(new { Message = $"Crime type with ID {id} not found." });
+                }
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
             }
 
             return Ok(response);
@@ -85,6 +115,8 @@ namespace Web.Controllers
             if(response is null)
                 return BadRequest(new { Message = "A type of crime with this title already exists." });
 
+            ClearCrimeCache(response.Id);
+
             return CreatedAtAction(nameof(GetCrimeType), new { Id = response.Id }, response);
         }
 
@@ -106,6 +138,8 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(new { Message = "Not found a type of crime with this id." });
 
+            ClearCrimeCache(response.Id);
+
             return Ok(response);
         }
 
@@ -124,7 +158,22 @@ namespace Web.Controllers
             if(!response)
                 return NotFound();
 
+            ClearCrimeCache(id);
+
             return Ok();
+        }
+
+        private void ClearCrimeCache(Guid crimeTypeId)
+        {
+            _cache.Remove($"CrimeType_{crimeTypeId}");
+
+            var keys = _cacheKeyTracker.GetKeys("AllCrimeTypes");
+
+            foreach (var key in keys)
+            {
+                _cache.Remove(key);
+                _cacheKeyTracker.RemoveKey(key);
+            }
         }
     }
 }

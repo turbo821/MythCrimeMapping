@@ -8,6 +8,8 @@ using Application.UseCases.GetAllWantedPerson;
 using Application.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Caching.Memory;
+using Application.Services.Interfaces;
 
 namespace Web.Controllers
 {
@@ -21,13 +23,18 @@ namespace Web.Controllers
         private readonly ICreateWantedPersonUseCase _createWantedPerson;
         private readonly IUpdateWantedPersonUseCase _updateWantedPerson;
         private readonly IDeleteWantedPersonUseCase _deleteWantedPerson;
+        private readonly IMemoryCache _cache;
+        private readonly ICacheKeyTracker _cacheKeyTracker;
+
         public WantedPersonApiController(
             ISelectAllWantedPersonsUseCase selectAllWantedPersons,
             IGetAllWantedPersonUseCase getAllWantedPersons,
             IGetWantedPersonUseCase getWantedPerson,
             ICreateWantedPersonUseCase createWantedPerson,
             IUpdateWantedPersonUseCase updateWantedPerson,
-            IDeleteWantedPersonUseCase deleteWantedPerson)
+            IDeleteWantedPersonUseCase deleteWantedPerson,
+            IMemoryCache cache,
+            ICacheKeyTracker cacheKeyTracker)
         {
             _selectAllWantedPersons = selectAllWantedPersons;
             _getAllWantedPersons = getAllWantedPersons;
@@ -35,12 +42,21 @@ namespace Web.Controllers
             _createWantedPerson = createWantedPerson;
             _updateWantedPerson = updateWantedPerson;
             _deleteWantedPerson = deleteWantedPerson;
+            _cache = cache;
+            _cacheKeyTracker = cacheKeyTracker;
         }
 
         [HttpGet("basic")]
         public async Task<IActionResult> SelectAllWantedPersons()
         {
-            var response = await _selectAllWantedPersons.Handle();
+            var cacheKey = "AllWantedPersons";
+            if (!_cache.TryGetValue(cacheKey, out var response))
+            {
+                response = await _selectAllWantedPersons.Handle();
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
+            }
 
             return Ok(response);
         }
@@ -48,8 +64,14 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllWantedPersons([FromQuery] PaginationSearchParameters request)
         {
-            var response = await _getAllWantedPersons.Handle(request);
+            var cacheKey = $"AllWantedPersons_{request.GetCacheKey()}";
+            if (!_cache.TryGetValue(cacheKey, out var response))
+            {
+                response = await _getAllWantedPersons.Handle(request);
 
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
+            }
             return Ok(response);
         }
 
@@ -57,11 +79,18 @@ namespace Web.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetWantedPerson(Guid id)
         {
-            var response = await _getWantedPerson.Handle(id);
-
-            if (response == null)
+            var cacheKey = $"WantedPerson_{id}";
+            if (!_cache.TryGetValue(cacheKey, out var response))
             {
-                return NotFound(new { Message = $"Wanted person with ID {id} not found." });
+                response = await _getWantedPerson.Handle(id);
+
+                if (response == null)
+                {
+                    return NotFound(new { Message = $"Wanted person with ID {id} not found." });
+                }
+
+                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                _cacheKeyTracker.AddKey(cacheKey);
             }
 
             return Ok(response);
@@ -85,6 +114,8 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(new { Message = "Such a wanted person already exists." });
 
+            ClearCrimeCache(response.Id);
+
             return CreatedAtAction(nameof(GetWantedPerson), new { response.Id }, response);
         }
 
@@ -106,6 +137,8 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(new { Message = "Not found a type of crime with this id." });
 
+            ClearCrimeCache(response.Id);
+
             return Ok(response);
         }
 
@@ -125,7 +158,22 @@ namespace Web.Controllers
             if(!response)
                 return NotFound();
 
+            ClearCrimeCache(id);
+
             return Ok();
+        }
+
+        private void ClearCrimeCache(Guid crimeTypeId)
+        {
+            _cache.Remove($"WantedPerson_{crimeTypeId}");
+
+            var keys = _cacheKeyTracker.GetKeys("AllWantedPersons");
+
+            foreach (var key in keys)
+            {
+                _cache.Remove(key);
+                _cacheKeyTracker.RemoveKey(key);
+            }
         }
     }
 }
