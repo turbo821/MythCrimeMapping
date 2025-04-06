@@ -150,7 +150,10 @@ namespace Web.Controllers
         {
             _cache.Remove($"Crime_{crimeId}");
 
-            var keys = _cacheKeyTracker.GetKeys("AllCrimes");
+            var keysCrimes = _cacheKeyTracker.GetKeys("AllCrimes");
+            var keysWantedPersons = _cacheKeyTracker.GetKeys("AllWantedPersons");
+
+            var keys = keysCrimes.Concat(keysWantedPersons);
 
             foreach (var key in keys)
             {
