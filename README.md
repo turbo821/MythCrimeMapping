@@ -26,14 +26,17 @@ The application is designed for convenient analysis and management of crime data
 ## How to run in Docker
 
 Using local docker files -- go to the repository directory and write the command:
+
 `docker-compose up`
 
 or
 
-(Is best.) Using loading ready-made docker images -- go to the repository directory and write the command:
-`docker compose -f .\docker-compose-with-load-images.yml up`
+(Is best.) Using Docker Hub Images with a loadbalancer to support multiple APIs -- go to the repository directory and write the command:
+
+`docker compose -f .\docker-compose-with-load-images.yml up --scale api=<number_api>`
 
 After launching, the client will be available at `http://localhost:80`, at `http://localhost:8080/swagger` you can test the api.
 
 To remove containers, write the command:
+
 `docker-compose down`
