@@ -1,3 +1,6 @@
+# images are built from local docker files
+# run command: docker compose up
+
 services:
   database:
     image: postgis/postgis:16-3.5-alpine
@@ -12,6 +15,12 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379"
+    restart: unless-stopped
+
   api:
     image: ${DOCKER_REGISTRY-}api
     build:
@@ -20,13 +29,15 @@ services:
     container_name: crime_map_api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:80,https://localhost:443,https://localhost:3000
+      - ALLOWED_ORIGINS=http://client:3000,http://client:80,https://client:443,https://client:3000
       - CONNECTION_STRING=Host=database;Port=5432;Database=crimemapdb;Username=postgres;Password=postgres
+      - REDIS_HOST=redis:6379
     depends_on:
       - database
+      - redis
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8080"
+      - "8081"
      
   client:
     image: ${DOCKER_REGISTRY-}client

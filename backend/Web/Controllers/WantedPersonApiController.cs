@@ -8,7 +8,6 @@ using Application.UseCases.GetAllWantedPerson;
 using Application.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Microsoft.Extensions.Caching.Memory;
 using Application.Services.Interfaces;
 
 namespace Web.Controllers
@@ -23,8 +22,9 @@ namespace Web.Controllers
         private readonly ICreateWantedPersonUseCase _createWantedPerson;
         private readonly IUpdateWantedPersonUseCase _updateWantedPerson;
         private readonly IDeleteWantedPersonUseCase _deleteWantedPerson;
-        private readonly IMemoryCache _cache;
+        private readonly ICacheService _cache;
         private readonly ICacheKeyTracker _cacheKeyTracker;
+        private readonly ICacheCleaner _cacheCleaner;
 
         public WantedPersonApiController(
             ISelectAllWantedPersonsUseCase selectAllWantedPersons,
@@ -33,8 +33,9 @@ namespace Web.Controllers
             ICreateWantedPersonUseCase createWantedPerson,
             IUpdateWantedPersonUseCase updateWantedPerson,
             IDeleteWantedPersonUseCase deleteWantedPerson,
-            IMemoryCache cache,
-            ICacheKeyTracker cacheKeyTracker)
+            ICacheService cache,
+            ICacheKeyTracker cacheKeyTracker,
+            ICacheCleaner cacheCleaner)
         {
             _selectAllWantedPersons = selectAllWantedPersons;
             _getAllWantedPersons = getAllWantedPersons;
@@ -44,35 +45,40 @@ namespace Web.Controllers
             _deleteWantedPerson = deleteWantedPerson;
             _cache = cache;
             _cacheKeyTracker = cacheKeyTracker;
+            _cacheCleaner = cacheCleaner;
+            _cacheCleaner = cacheCleaner;
         }
 
         [HttpGet("basic")]
         public async Task<IActionResult> SelectAllWantedPersons()
         {
             var cacheKey = "AllWantedPersons";
-            if (!_cache.TryGetValue(cacheKey, out var response))
+            if (!await _cache.ExistsAsync(cacheKey))
             {
-                response = await _selectAllWantedPersons.Handle();
-
-                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                var response = await _selectAllWantedPersons.Handle();
+                await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
                 _cacheKeyTracker.AddKey(cacheKey);
+                return Ok(response);
             }
 
-            return Ok(response);
+            var cached = await _cache.GetAsync<object>(cacheKey);
+            return Ok(cached);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllWantedPersons([FromQuery] PaginationSearchParameters request)
         {
             var cacheKey = $"AllWantedPersons_{request.GetCacheKey()}";
-            if (!_cache.TryGetValue(cacheKey, out var response))
+            if (!await _cache.ExistsAsync(cacheKey))
             {
-                response = await _getAllWantedPersons.Handle(request);
-
-                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                var response = await _getAllWantedPersons.Handle(request);
+                await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
                 _cacheKeyTracker.AddKey(cacheKey);
+                return Ok(response);
             }
-            return Ok(response);
+
+            var cached = await _cache.GetAsync<object>(cacheKey);
+            return Ok(cached);
         }
 
         [HttpGet]
@@ -80,20 +86,22 @@ namespace Web.Controllers
         public async Task<IActionResult> GetWantedPerson(Guid id)
         {
             var cacheKey = $"WantedPerson_{id}";
-            if (!_cache.TryGetValue(cacheKey, out var response))
+            if (!await _cache.ExistsAsync(cacheKey))
             {
-                response = await _getWantedPerson.Handle(id);
+                var response = await _getWantedPerson.Handle(id);
 
                 if (response == null)
                 {
                     return NotFound(new { Message = $"Wanted person with ID {id} not found." });
                 }
 
-                _cache.Set(cacheKey, response, TimeSpan.FromMinutes(10));
+                await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
                 _cacheKeyTracker.AddKey(cacheKey);
+                return Ok(response);
             }
 
-            return Ok(response);
+            var cached = await _cache.GetAsync<object>(cacheKey);
+            return Ok(cached);
         }
 
         [HttpPost]
@@ -114,7 +122,7 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(new { Message = "Such a wanted person already exists." });
 
-            ClearCrimeCache(response.Id);
+            await ClearCrimeCache(response.Id);
 
             return CreatedAtAction(nameof(GetWantedPerson), new { response.Id }, response);
         }
@@ -137,7 +145,7 @@ namespace Web.Controllers
             if (response is null)
                 return BadRequest(new { Message = "Not found a type of crime with this id." });
 
-            ClearCrimeCache(response.Id);
+            await ClearCrimeCache(response.Id);
 
             return Ok(response);
         }
@@ -158,22 +166,16 @@ namespace Web.Controllers
             if(!response)
                 return NotFound();
 
-            ClearCrimeCache(id);
+            await ClearCrimeCache(id);
 
             return Ok();
         }
 
-        private void ClearCrimeCache(Guid crimeTypeId)
+        private async Task ClearCrimeCache(Guid crimeTypeId)
         {
-            _cache.Remove($"WantedPerson_{crimeTypeId}");
-
-            var keys = _cacheKeyTracker.GetKeys("AllWantedPersons");
-
-            foreach (var key in keys)
-            {
-                _cache.Remove(key);
-                _cacheKeyTracker.RemoveKey(key);
-            }
+            await _cache.RemoveAsync($"WantedPerson_{crimeTypeId}");
+            await _cacheCleaner.RemoveByPatternAsync("AllCrimes");
+            await _cacheCleaner.RemoveByPatternAsync("AllWantedPersons");
         }
     }
 }

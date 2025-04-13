@@ -35,7 +35,7 @@ using Application.UseCases.GetUser;
 using Application.UseCases.UpdateUser;
 using Application.UseCases.DeleteUser;
 using System.Net;
-using Infrastructure.Cache;
+using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,8 +67,7 @@ builder.Services.AddDbContext<AppCrimeMapContext>(
         x => x.UseNetTopologySuite())
 );
 
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<ICacheKeyTracker, InMemoryCacheKeyTracker>();
+builder.Services.AddCacheWithFallback(builder.Configuration);
 
 builder.Services.AddSingleton<IPasswordRecoveryService>(new BasePasswordRecoveryService(new NetworkCredential(email, code)));
 
@@ -149,6 +148,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/api/health", () => Results.Ok());
 
 app.MapControllers();
 app.MapHub<RealHub>("/realhub");
