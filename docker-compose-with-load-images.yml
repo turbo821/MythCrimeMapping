@@ -1,8 +1,9 @@
-# does not depend on files(except crimemapdb_dump.sql), all images are downloaded from docker hub
+# images are downloaded from docker hub, supports many api
+# run command: docker compose -f .\docker-compose-with-load-images.yml up --scale api=<number_api>
+
 services:
   database:
     image: postgis/postgis:16-3.5-alpine
-    container_name: crime_map_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -11,25 +12,45 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
       - ./crimemapdb_dump.sql:/docker-entrypoint-initdb.d/crimemapdb_dump.sql
     ports:
-      - "5432:5432"
+      - "5432"
+
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379"
+    restart: unless-stopped
 
   api:
-    image: turbo821/myth-crime-mapping-api:04-07
-    container_name: crime_map_api
+    image: turbo821/myth-crime-mapping-api:04-13
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:80,https://localhost:443,https://localhost:3000
+      - ALLOWED_ORIGINS=http://client:3000,http://client:80,https://client:443,https://client:3000
       - CONNECTION_STRING=Host=database;Port=5432;Database=crimemapdb;Username=postgres;Password=postgres
+      - REDIS_HOST=redis:6379
     depends_on:
       - database
+      - redis
     ports:
-      - "8080:8080"
-      - "8081:8081"
-     
-  client:
-    image: turbo821/myth-crime-mapping-client:03-07
-    container_name: crime_map_client
+      - "8080"
+      - "8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  loadbalancer:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx-loadbalancer.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
+
+  client:
+    image: turbo821/myth-crime-mapping-client:04-13
+    depends_on:
+      - loadbalancer
     ports:
       - "80:80"
