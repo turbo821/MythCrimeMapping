@@ -13,6 +13,11 @@ services:
       - ./crimemapdb_dump.sql:/docker-entrypoint-initdb.d/crimemapdb_dump.sql
     ports:
       - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7.4.2
@@ -21,7 +26,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: turbo821/myth-crime-mapping-api:04-13
+    image: turbo821/myth-crime-mapping-api:10-23
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ALLOWED_ORIGINS=http://client:3000,http://client:80,https://client:443,https://client:3000
